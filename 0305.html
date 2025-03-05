@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG直方图</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        svg {
+            background-color: #f9f9f9;
+        }
+        .bar {
+            fill: steelblue;
+        }
+        .bar:hover {
+            fill: orange;
+        }
+        text {
+            font-size: 12px;
+            fill: black;
+            text-anchor: middle;
+        }
+    </style>
+</head>
+<body>
+    <h2>全国城镇调查失业率(%) - 直方图</h2>
+    <svg id="histogram" width="600" height="400"></svg>
+    <script>
+        const data = [5.2, 5.1, 5.0, 5.0, 5.1, 5.3, 5.2, 5.0, 5.0, 5.0, 5.2, 5.3];
+        const labels = ["2025-02", "2025-01", "2024-12", "2024-11", "2024-10", "2024-09", "2024-08", "2024-07", "2024-06", "2024-05", "2024-04", "2024-03"];
+        const svg = document.getElementById("histogram");
+        const width = svg.getAttribute("width");
+        const height = svg.getAttribute("height");
+        const barWidth = width / data.length;
+        const maxData = Math.max(...data);
+        
+        data.forEach((value, index) => {
+            let barHeight = (value / maxData) * (height - 50);
+            let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            rect.setAttribute("x", index * barWidth + 10);
+            rect.setAttribute("y", height - barHeight - 30);
+            rect.setAttribute("width", barWidth - 15);
+            rect.setAttribute("height", barHeight);
+            rect.setAttribute("class", "bar");
+            
+            let textValue = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            textValue.setAttribute("x", index * barWidth + (barWidth / 2));
+            textValue.setAttribute("y", height - barHeight - 35);
+            textValue.textContent = value;
+            
+            let textLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            textLabel.setAttribute("x", index * barWidth + (barWidth / 2));
+            textLabel.setAttribute("y", height - 10);
+            textLabel.textContent = labels[index];
+            textLabel.setAttribute("transform", `rotate(-45, ${index * barWidth + (barWidth / 2)}, ${height - 10})`);
+            textLabel.setAttribute("font-size", "10");
+            textLabel.setAttribute("fill", "black");
+            
+            svg.appendChild(rect);
+            svg.appendChild(textValue);
+            svg.appendChild(textLabel);
+        });
+    </script>
+</body>
+</html>
