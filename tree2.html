@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SVG 绘制标准二叉树</title>
+</head>
+<body>
+    <svg id="binaryTree" width="800" height="600" xmlns="http://www.w3.org/2000/svg"></svg>
+
+    <script>
+        // 定义二叉树绘制函数
+        function drawBinaryTree(svgElement, levels) {
+            const width = svgElement.getAttribute('width');
+            const height = svgElement.getAttribute('height');
+            const startX = width / 2;
+            const startY = height - 20;
+            const verticalSpacing = 80; // 垂直间距
+            const initialHorizontalSpacing = width / 4; // 初始水平间距
+            const initialLineWidth = 8; // 初始线条粗细
+            
+            // 递归绘制函数
+            function drawBranch(x, y, level, horizontalSpacing, lineWidth) {
+                if (level === 0) return;
+                
+                // 计算左子节点位置
+                const leftX = x - horizontalSpacing;
+                const leftY = y - verticalSpacing;
+                
+                // 计算右子节点位置
+                const rightX = x + horizontalSpacing;
+                const rightY = y - verticalSpacing;
+                
+                // 绘制左分支
+                const leftLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                leftLine.setAttribute("x1", x);
+                leftLine.setAttribute("y1", y);
+                leftLine.setAttribute("x2", leftX);
+                leftLine.setAttribute("y2", leftY);
+                leftLine.setAttribute("stroke", "#8B4513"); // 赭石色
+                leftLine.setAttribute("stroke-width", lineWidth);
+                svgElement.appendChild(leftLine);
+                
+                // 绘制右分支
+                const rightLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                rightLine.setAttribute("x1", x);
+                rightLine.setAttribute("y1", y);
+                rightLine.setAttribute("x2", rightX);
+                rightLine.setAttribute("y2", rightY);
+                rightLine.setAttribute("stroke", "#8B4513"); // 赭石色
+                rightLine.setAttribute("stroke-width", lineWidth);
+                svgElement.appendChild(rightLine);
+                
+                // 递归绘制左右子树，线条粗细递减
+                const newLineWidth = lineWidth - 1; // 加大粗细变化
+                if (newLineWidth > 1) { // 确保线条粗细不会小于1
+                    drawBranch(leftX, leftY, level - 1, horizontalSpacing / 2, newLineWidth);
+                    drawBranch(rightX, rightY, level - 1, horizontalSpacing / 2, newLineWidth);
+                } else {
+                    drawBranch(leftX, leftY, level - 1, horizontalSpacing / 2, 1);
+                    drawBranch(rightX, rightY, level - 1, horizontalSpacing / 2, 1);
+                }
+            }
+            
+            // 绘制树干
+            const trunkLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            trunkLine.setAttribute("x1", startX);
+            trunkLine.setAttribute("y1", startY);
+            trunkLine.setAttribute("x2", startX);
+            trunkLine.setAttribute("y2", startY - verticalSpacing);
+            trunkLine.setAttribute("stroke", "#8B4513"); // 赭石色
+            trunkLine.setAttribute("stroke-width", initialLineWidth);
+            svgElement.appendChild(trunkLine);
+            
+            // 从树干顶部开始绘制分支
+            drawBranch(startX, startY - verticalSpacing, levels, initialHorizontalSpacing, initialLineWidth - 1);
+        }
+        
+        // 执行绘制函数
+        const svgElement = document.getElementById('binaryTree');
+        const levels = 5; // 控制树的深度和分叉数量
+        drawBinaryTree(svgElement, levels);
+    </script>
+</body>
+</html>
