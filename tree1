@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JavaScript 绘制二叉树</title>
+    <style>
+        svg {
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <svg id="treeSvg" width="600" height="400" xmlns="http://www.w3.org/2000/svg"></svg>
+
+    <script>
+        // 定义二叉树结构
+        class TreeNode {
+            constructor(value) {
+                this.value = value;
+                this.left = null;
+                this.right = null;
+            }
+        }
+
+        // 创建一个简单的二叉树
+        function createBinaryTree() {
+            let root = new TreeNode('A');
+            root.left = new TreeNode('B');
+            root.right = new TreeNode('C');
+            root.left.left = new TreeNode('D');
+            root.left.right = new TreeNode('E');
+            root.right.left = new TreeNode('F');
+            root.right.right = new TreeNode('G');
+            return root;
+        }
+
+        // 绘制二叉树
+        function drawBinaryTree(root, svgElement, x, y, level, horizontalSpacing, verticalSpacing) {
+            if (!root) return;
+
+            // 计算当前节点的位置
+            let nodeX = x;
+            let nodeY = y + level * verticalSpacing;
+
+            // 绘制节点
+            let circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            circle.setAttribute("cx", nodeX);
+            circle.setAttribute("cy", nodeY);
+            circle.setAttribute("r", 20);
+            circle.setAttribute("fill", "white");
+            circle.setAttribute("stroke", "black");
+            svgElement.appendChild(circle);
+
+            // 绘制节点值
+            let text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            text.setAttribute("x", nodeX);
+            text.setAttribute("y", nodeY + 4);
+            text.setAttribute("text-anchor", "middle");
+            text.setAttribute("font-size", "14");
+            text.textContent = root.value;
+            svgElement.appendChild(text);
+
+            // 绘制左子节点和连接线
+            if (root.left) {
+                let leftX = x - Math.pow(2, (3 - level)) * horizontalSpacing;
+                let leftY = nodeY + verticalSpacing;
+
+                // 绘制连接线
+                let line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                line.setAttribute("x1", nodeX);
+                line.setAttribute("y1", nodeY + 20);
+                line.setAttribute("x2", leftX);
+                line.setAttribute("y2", leftY - 20);
+                line.setAttribute("stroke", "black");
+                svgElement.appendChild(line);
+
+                drawBinaryTree(root.left, svgElement, leftX, leftY, level + 1, horizontalSpacing, verticalSpacing);
+            }
+
+            // 绘制右子节点和连接线
+            if (root.right) {
+                let rightX = x + Math.pow(2, (3 - level)) * horizontalSpacing;
+                let rightY = nodeY + verticalSpacing;
+
+                // 绘制连接线
+                let line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                line.setAttribute("x1", nodeX);
+                line.setAttribute("y1", nodeY + 20);
+                line.setAttribute("x2", rightX);
+                line.setAttribute("y2", rightY - 20);
+                line.setAttribute("stroke", "black");
+                svgElement.appendChild(line);
+
+                drawBinaryTree(root.right, svgElement, rightX, rightY, level + 1, horizontalSpacing, verticalSpacing);
+            }
+        }
+
+        // 主函数
+        function main() {
+            let svgElement = document.getElementById('treeSvg');
+            let root = createBinaryTree();
+            let horizontalSpacing = 50; // 水平间距
+            let verticalSpacing = 80;   // 垂直间距
+            drawBinaryTree(root, svgElement, 300, 20, 0, horizontalSpacing, verticalSpacing);
+        }
+
+        // 执行主函数
+        main();
+    </script>
+</body>
+</html>
