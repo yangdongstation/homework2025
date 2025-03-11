@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SVG 绘制文字树</title>
+    <style>
+        text {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            dominant-baseline: middle;
+            text-anchor: middle;
+        }
+        .red-circle {
+            fill: red;
+        }
+    </style>
+</head>
+<body>
+    <svg id="textTree" width="800" height="600" xmlns="http://www.w3.org/2000/svg"></svg>
+
+    <script>
+        // 定义文字树绘制函数
+        function drawTextTree(svgElement, levels) {
+            const width = svgElement.getAttribute('width');
+            const height = svgElement.getAttribute('height');
+            const startX = width / 2;
+            const startY = height - 20;
+            const verticalSpacing = 80; // 垂直间距
+            const initialHorizontalSpacing = width / 4; // 初始水平间距
+            const textContent = "我喜欢玩原神";
+            const textLength = textContent.length;
+            
+            // 递归绘制函数
+            function drawBranch(x, y, level, horizontalSpacing) {
+                if (level === 0) return;
+                
+                // 计算左子节点位置
+                const leftX = x - horizontalSpacing;
+                const leftY = y - verticalSpacing;
+                
+                // 计算右子节点位置
+                const rightX = x + horizontalSpacing;
+                const rightY = y - verticalSpacing;
+                
+                // 计算文本旋转角度
+                const leftAngle = Math.atan2(leftY - y, leftX - x) * 180 / Math.PI;
+                const rightAngle = Math.atan2(rightY - y, rightX - x) * 180 / Math.PI;
+                
+                // 绘制左分支文本
+                for (let i = 0; i < textLength; i++) {
+                    const textX = x + (leftX - x) * (i / textLength);
+                    const textY = y + (leftY - y) * (i / textLength);
+                    const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                    text.setAttribute("x", textX);
+                    text.setAttribute("y", textY);
+                    text.setAttribute("transform", `rotate(${leftAngle} ${textX} ${textY})`);
+                    text.textContent = textContent[i];
+                    svgElement.appendChild(text);
+                }
+                
+                // 绘制右分支文本
+                for (let i = 0; i < textLength; i++) {
+                    const textX = x + (rightX - x) * (i / textLength);
+                    const textY = y + (rightY - y) * (i / textLength);
+                    const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                    text.setAttribute("x", textX);
+                    text.setAttribute("y", textY);
+                    text.setAttribute("transform", `rotate(${rightAngle} ${textX} ${textY})`);
+                    text.textContent = textContent[i];
+                    svgElement.appendChild(text);
+                }
+                
+                // 递归绘制左右子树
+                drawBranch(leftX, leftY, level - 1, horizontalSpacing / 2);
+                drawBranch(rightX, rightY, level - 1, horizontalSpacing / 2);
+                
+                // 在末端子节点添加红色实心圆形
+                if (level === 1) {
+                    const leftCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                    leftCircle.setAttribute("cx", leftX);
+                    leftCircle.setAttribute("cy", leftY);
+                    leftCircle.setAttribute("r", 5);
+                    leftCircle.setAttribute("class", "red-circle");
+                    svgElement.appendChild(leftCircle);
+                    
+                    const rightCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                    rightCircle.setAttribute("cx", rightX);
+                    rightCircle.setAttribute("cy", rightY);
+                    rightCircle.setAttribute("r", 5);
+                    rightCircle.setAttribute("class", "red-circle");
+                    svgElement.appendChild(rightCircle);
+                }
+            }
+            
+            // 绘制树干文本
+            for (let i = 0; i < textLength; i++) {
+                const textX = startX;
+                const textY = startY - verticalSpacing / 2 + (startY - (startY - verticalSpacing)) * (i / textLength);
+                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                text.setAttribute("x", textX);
+                text.setAttribute("y", textY);
+                text.textContent = textContent[i];
+                svgElement.appendChild(text);
+            }
+            
+            // 从树干顶部开始绘制分支
+            drawBranch(startX, startY - verticalSpacing, levels, initialHorizontalSpacing);
+        }
+        
+        // 执行绘制函数
+        const svgElement = document.getElementById('textTree');
+        const levels = 4; // 控制树的深度和分叉数量
+        drawTextTree(svgElement, levels);
+    </script>
+</body>
+</html>
