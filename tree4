@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>曼德博罗集</title>
+    <style>
+        body { text-align: center; background-color: black; }
+        canvas { display: block; margin: auto; background-color: white; }
+    </style>
+</head>
+<body>
+    <canvas id="mandelbrotCanvas"></canvas>
+    <script>
+        const canvas = document.getElementById("mandelbrotCanvas");
+        const ctx = canvas.getContext("2d");
+        const width = canvas.width = 800;
+        const height = canvas.height = 800;
+        const imgData = ctx.getImageData(0, 0, width, height);
+        const maxIter = 100;
+        
+        function mandelbrot(x, y) {
+            let real = x;
+            let imag = y;
+            let iter = 0;
+            while (iter < maxIter) {
+                let real2 = real * real - imag * imag + x;
+                let imag2 = 2 * real * imag + y;
+                real = real2;
+                imag = imag2;
+                if (real * real + imag * imag > 4) break;
+                iter++;
+            }
+            return iter;
+        }
+        
+        function drawMandelbrot() {
+            for (let px = 0; px < width; px++) {
+                for (let py = 0; py < height; py++) {
+                    let x = (px / width) * 3.5 - 2.5;
+                    let y = (py / height) * 3.5 - 1.75;
+                    let iter = mandelbrot(x, y);
+                    let color = iter === maxIter ? 0 : (iter / maxIter) * 255;
+                    let index = (px + py * width) * 4;
+                    imgData.data[index] = color;
+                    imgData.data[index + 1] = color;
+                    imgData.data[index + 2] = color;
+                    imgData.data[index + 3] = 255;
+                }
+            }
+            ctx.putImageData(imgData, 0, 0);
+        }
+        
+        drawMandelbrot();
+    </script>
+</body>
+</html>
