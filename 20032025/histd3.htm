@@ -1,1 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>随机数直方图</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        svg {
+            border: 1px solid #ccc;
+            margin-top: 20px;
+        }
+        .bar {
+            fill: #4CAF50;
+            transition: fill 0.3s;
+        }
+        .bar:hover {
+            fill: #45a049;
+        }
+        .axis {
+            font-size: 12px;
+            fill: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>随机数直方图</h1>
+    <div id="chart"></div>
 
+    <script>
+        // 生成随机数数组
+        function generateRandomNumbers(count, min, max) {
+            const numbers = [];
+            for (let i = 0; i < count; i++) {
+                numbers.push(Math.floor(Math.random() * (max - min + 1)) + min);
+            }
+            return numbers;
+        }
+
+        // 绘制直方图
+        function drawHistogram(numbers) {
+            const svgWidth = 800;
+            const svgHeight = 400;
+            const margin = { top: 30, right: 30, bottom: 50, left: 60 };
+            const width = svgWidth - margin.left - margin.right;
+            const height = svgHeight - margin.top - margin.bottom;
+            
+            const chart = document.getElementById('chart');
+            chart.innerHTML = '';
+            
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('width', svgWidth);
+            svg.setAttribute('height', svgHeight);
+            chart.appendChild(svg);
+            
+            // 创建SVG组并设置偏移
+            const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            g.setAttribute('transform', `translate(${margin.left},${margin.top})`);
+            svg.appendChild(g);
+            
+            // 计算柱子宽度
+            const barWidth = width / numbers.length;
+            
+            // 绘制柱子
+            numbers.forEach((value, index) => {
+                const bar = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                bar.setAttribute('class', 'bar');
+                bar.setAttribute('x', index * barWidth);
+                bar.setAttribute('y', height - value);
+                bar.setAttribute('width', barWidth - 2);
+                bar.setAttribute('height', value);
+                g.appendChild(bar);
+                
+                // 添加值标签
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('class', 'axis');
+                text.setAttribute('x', index * barWidth + barWidth / 2);
+                text.setAttribute('y', height - value - 5);
+                text.setAttribute('text-anchor', 'middle');
+                text.textContent = value;
+                g.appendChild(text);
+            });
+            
+            // 绘制X轴
+            const xAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            xAxis.setAttribute('class', 'axis');
+            xAxis.setAttribute('x1', 0);
+            xAxis.setAttribute('y1', height);
+            xAxis.setAttribute('x2', width);
+            xAxis.setAttribute('y2', height);
+            g.appendChild(xAxis);
+            
+            // 绘制Y轴
+            const yAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            yAxis.setAttribute('class', 'axis');
+            yAxis.setAttribute('x1', 0);
+            yAxis.setAttribute('y1', 0);
+            yAxis.setAttribute('x2', 0);
+            yAxis.setAttribute('y2', height);
+            g.appendChild(yAxis);
+            
+            // 添加Y轴标签
+            const maxValue = Math.max(...numbers);
+            for (let i = 0; i <= maxValue; i += maxValue / 5) {
+                const y = height - i;
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('class', 'axis');
+                line.setAttribute('x1', 0);
+                line.setAttribute('y1', y);
+                line.setAttribute('x2', 10);
+                line.setAttribute('y2', y);
+                g.appendChild(line);
+                
+                const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                label.setAttribute('class', 'axis');
+                label.setAttribute('x', -20);
+                label.setAttribute('y', y + 5);
+                label.setAttribute('text-anchor', 'end');
+                label.textContent = Math.round(i);
+                g.appendChild(label);
+            }
+        }
+
+        // 生成20个1到100之间的随机数
+        const randomNumbers = generateRandomNumbers(20, 1, 100);
+        drawHistogram(randomNumbers);
+    </script>
+</body>
+</html>
