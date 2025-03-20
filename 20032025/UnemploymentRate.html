@@ -130,24 +130,29 @@
             g.appendChild(yAxis);
             
             // 添加Y轴标签
-            const step = Math.floor(height / 5);
-            for (let i = 0; i <= height; i += step) {
-                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                line.setAttribute('class', 'axis');
-                line.setAttribute('x1', 0);
-                line.setAttribute('y1', height - i);
-                line.setAttribute('x2', 10);
-                line.setAttribute('y2', height - i);
-                g.appendChild(line);
+            const numberOfTicks = 6; // Y轴刻度数量
+            for (let i = 0; i <= numberOfTicks; i++) {
+                const percentage = i / numberOfTicks;
+                const rateValue = minRate + percentage * rateRange;
+                const yPosition = height - percentage * height;
                 
-                const labelValue = ((maxRate - (i / height) * rateRange).toFixed(1));
-                const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                label.setAttribute('class', 'axis');
-                label.setAttribute('x', -20);
-                label.setAttribute('y', height - i + 5);
-                label.setAttribute('text-anchor', 'end');
-                label.textContent = labelValue + '%';
-                g.appendChild(label);
+                // 添加刻度线
+                const tickLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                tickLine.setAttribute('class', 'axis');
+                tickLine.setAttribute('x1', 0);
+                tickLine.setAttribute('y1', yPosition);
+                tickLine.setAttribute('x2', 10);
+                tickLine.setAttribute('y2', yPosition);
+                g.appendChild(tickLine);
+                
+                // 添加刻度标签
+                const tickLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                tickLabel.setAttribute('class', 'axis');
+                tickLabel.setAttribute('x', -20);
+                tickLabel.setAttribute('y', yPosition + 5);
+                tickLabel.setAttribute('text-anchor', 'end');
+                tickLabel.textContent = rateValue.toFixed(1) + '%';
+                g.appendChild(tickLabel);
             }
             
             // 添加图表标题
