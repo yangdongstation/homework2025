@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Number Histogram</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .histogram {
+            width: 80%;
+            height: 400px;
+            background-color: #f0f0f0;
+            position: relative;
+        }
+        .bar {
+            fill: steelblue;
+            transition: width 1s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="histogram">
+        <svg id="histogramSvg" width="80%" height="400px"></svg>
+    </div>
+
+    <script>
+        const svg = document.getElementById('histogramSvg');
+        const binWidth = 5; // 线性间隔
+        const numBins = Math.floor((svg.width - 2 * binWidth) / binWidth);
+
+        function createBars() {
+            for (let i = 0; i < numBins; i++) {
+                const bar = document.createElement('rect');
+                bar.setAttribute('class', 'bar');
+                bar.setAttribute('x', i * binWidth);
+                bar.setAttribute('y', svg.height - 2); // 最底端
+                bar.setAttribute('width', binWidth);
+                bar.setAttribute('height', 0); // 默认高度为0
+
+                svg.appendChild(bar);
+            }
+        }
+
+        function updateBars() {
+            const numSamples = 100; // 每次绘制时生成的随机数数量
+            const minRandom = 0;
+            const maxRandom = 10;
+
+            for (let i = 0; i < numSamples; i++) {
+                const randomNumber = Math.floor(Math.random() * (maxRandom - minRandom + 1) + minRandom);
+                const barIndex = Math.min(numBins - 1, Math.floor(randomNumber / binWidth));
+
+                const bars = document.querySelectorAll('.bar');
+                bars[barIndex].setAttribute('height', bars[barIndex].getAttribute('y') + barIndex * binWidth);
+            }
+        }
+
+        createBars();
+        updateBars(); // 初始绘制
+        setInterval(updateBars, 100); // 每秒更新一次直方图
+    </script>
+</body>
+</html>
