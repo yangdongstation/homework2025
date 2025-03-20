@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>全国城镇16—24岁劳动力失业率直方图</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        svg {
+            border: 1px solid #ccc;
+            margin-top: 20px;
+        }
+        .bar {
+            transition: fill 0.3s;
+        }
+        .bar:hover {
+            fill: #1e88e5;
+        }
+        .axis {
+            font-size: 12px;
+            fill: #333;
+        }
+        .title {
+            font-size: 18px;
+            text-anchor: middle;
+        }
+        .signature {
+            font-size: 14px;
+            fill: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <h1>全国城镇不包含在校生的16—24岁劳动力失业率</h1>
+    <div id="chart"></div>
+
+    <script>
+        // 数据：全国城镇不包含在校生的16—24岁劳动力失业率
+        const unemploymentData = [
+            { month: "2024年1月", rate: 14.6 },
+            { month: "2024年2月", rate: 15.3 },
+            { month: "2024年3月", rate: 15.3 },
+            { month: "2024年4月", rate: 14.7 },
+            { month: "2024年5月", rate: 14.2 },
+            { month: "2024年6月", rate: 13.2 },
+            { month: "2024年7月", rate: 17.1 },
+            { month: "2024年8月", rate: 18.8 },
+            { month: "2024年9月", rate: 17.6 },
+            { month: "2024年10月", rate: 17.1 },
+            { month: "2024年11月", rate: 16.1 },
+            { month: "2024年12月", rate: 15.7 },
+            { month: "2025年1月", rate: 16.1 }
+        ];
+
+        // 绘制直方图
+        function drawHistogram(data) {
+            const svgWidth = 900;
+            const svgHeight = 500;
+            const margin = { top: 50, right: 50, bottom: 100, left: 60 };
+            const width = svgWidth - margin.left - margin.right;
+            const height = svgHeight - margin.top - margin.bottom;
+            
+            const chart = document.getElementById('chart');
+            chart.innerHTML = '';
+            
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('width', svgWidth);
+            svg.setAttribute('height', svgHeight);
+            chart.appendChild(svg);
+            
+            // 创建SVG组并设置偏移
+            const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            g.setAttribute('transform', `translate(${margin.left},${margin.top})`);
+            svg.appendChild(g);
+            
+            // 计算柱子宽度
+            const barWidth = width / data.length;
+            
+            // 计算颜色范围
+            const minRate = Math.min(...data.map(d => d.rate));
+            const maxRate = Math.max(...data.map(d => d.rate));
+            const rateRange = maxRate - minRate;
+            
+            // 绘制柱子
+            data.forEach((item, index) => {
+                const rate = item.rate;
+                const month = item.month;
+                
+                // 计算Y轴位置（根据最大值和最小值进行缩放）
+                const rateHeight = ((rate - minRate) / rateRange) * height;
+                
+                // 计算蓝色渐变颜色
+                const hue = 200 + (index / (data.length - 1)) * 40; // 蓝色范围从200到240
+                const lightness = 50 - (index / (data.length - 1)) * 20; // 亮度从50到30
+                const color = `hsl(${hue}, 70%, ${lightness}%)`;
+                
+                const bar = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                bar.setAttribute('class', 'bar');
+                bar.setAttribute('x', index * barWidth);
+                bar.setAttribute('y', height - rateHeight);
+                bar.setAttribute('width', barWidth - 2);
+                bar.setAttribute('height', rateHeight);
+                bar.setAttribute('fill', color);
+                g.appendChild(bar);
+                
+                // 添加值标签
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('class', 'axis');
+                text.setAttribute('x', index * barWidth + barWidth / 2);
+                text.setAttribute('y', height - rateHeight - 5);
+                text.setAttribute('text-anchor', 'middle');
+                text.textContent = rate + '%';
+                g.appendChild(text);
+                
+                // 添加月份标签
+                const monthText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                monthText.setAttribute('class', 'axis');
+                monthText.setAttribute('x', index * barWidth + barWidth / 2);
+                monthText.setAttribute('y', height + 20);
+                monthText.setAttribute('text-anchor', 'middle');
+                monthText.textContent = month;
+                g.appendChild(monthText);
+            });
+            
+            // 绘制Y轴
+            const yAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            yAxis.setAttribute('class', 'axis');
+            yAxis.setAttribute('x1', 0);
+            yAxis.setAttribute('y1', 0);
+            yAxis.setAttribute('x2', 0);
+            yAxis.setAttribute('y2', height);
+            g.appendChild(yAxis);
+            
+            // 添加Y轴标签
+            const numberOfTicks = 6; // Y轴刻度数量
+            for (let i = 0; i <= numberOfTicks; i++) {
+                const percentage = i / numberOfTicks;
+                const rateValue = minRate + percentage * rateRange;
+                const yPosition = height - percentage * height;
+                
+                // 添加刻度线
+                const tickLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                tickLine.setAttribute('class', 'axis');
+                tickLine.setAttribute('x1', 0);
+                tickLine.setAttribute('y1', yPosition);
+                tickLine.setAttribute('x2', 10);
+                tickLine.setAttribute('y2', yPosition);
+                g.appendChild(tickLine);
+                
+                // 添加刻度标签
+                const tickLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                tickLabel.setAttribute('class', 'axis');
+                tickLabel.setAttribute('x', -20);
+                tickLabel.setAttribute('y', yPosition + 5);
+                tickLabel.setAttribute('text-anchor', 'end');
+                tickLabel.textContent = rateValue.toFixed(1) + '%';
+                g.appendChild(tickLabel);
+            }
+            
+            // 添加图表标题
+            const title = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            title.setAttribute('class', 'title');
+            title.setAttribute('x', width / 2);
+            title.setAttribute('y', -20);
+            title.setAttribute('text-anchor', 'middle');
+            title.textContent = '失业率变化趋势';
+            g.appendChild(title);
+            
+            // 添加签名
+            const signature = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            signature.setAttribute('class', 'signature');
+            signature.setAttribute('x', width - 40);
+            signature.setAttribute('y', height + 40);
+            signature.textContent = 'AZ';
+            g.appendChild(signature);
+        }
+
+        // 绘制失业率直方图
+        drawHistogram(unemploymentData);
+    </script>
+</body>
+</html>
