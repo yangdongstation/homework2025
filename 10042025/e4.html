@@ -1,1 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>茜茜公主关系图</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .tooltip {
+            position: absolute;
+            background-color: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            pointer-events: none;
+            font-size: 14px;
+            max-width: 250px;
+            z-index: 10;
+        }
+        .node {
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+        .node:hover {
+            opacity: 0.8;
+        }
+        .link {
+            stroke-width: 2px;
+            stroke-opacity: 0.7;
+        }
+        .legend {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 0 10px 10px 0;
+        }
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            margin-right: 5px;
+            border-radius: 3px;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>茜茜公主关系图</h1>
+        <div id="visualization"></div>
+        <div class="controls">
+            <button id="zoom-in">放大</button>
+            <button id="zoom-out">缩小</button>
+            <button id="reset-zoom">重置</button>
+        </div>
+        <div class="legend" id="legend"></div>
+    </div>
 
+    <script>
+        // 从本地JSON文件加载数据
+        fetch('eli.json')
+            .then(response => response.json())
+            .then(data => {
+                // 颜色映射
+                const colorScale = d3.scaleOrdinal()
+                    .domain([0, 1, 2, 3, 4, 5, 6, 7])
+                    .range(["#FF6B6B", "#4ECDC4", "#FFD166", "#06D6A0", "#118AB2", "#EF476F", "#073B4C", "#FF9F1C"]);
+
+                // 链接颜色映射
+                const linkColorMap = {
+                    "夫妻": "#FF6B6B",
+                    "婆媳冲突": "#EF476F",
+                    "母子": "#FFD166",
+                    "父子": "#FFD166",
+                    "母子": "#FFD166",
+                    "纠缠": "#06D6A0",
+                    "诱惑": "#06D6A0",
+                    "刺杀（受害者与凶手）": "#FF9F1C",
+                    "姐妹": "#118AB2",
+                    "原本更中意的儿媳": "#118AB2",
+                    "父女": "#4ECDC4"
+                };
+
+                // 创建SVG容器
+                const width = document.querySelector('.container').clientWidth - 40;
+                const height = 600;
+
+                const svg = d3.select("#visualization")
+                    .append("svg")
+                    .attr("width", width)
+                    .attr("height", height)
+                    .attr("viewBox", [0, 0, width, height])
+                    .attr("style", "max-width: 100%; height: auto;");
+
+                // 创建缩放行为
+                const zoom = d3.zoom()
+                    .scaleExtent([0.5, 2])
+                    .on("zoom", (event) => {
+                        svg.attr("transform", event.transform);
+                    });
+
+                svg.call(zoom);
+
+                // 创建工具提示
+                const tooltip = d3.select("body")
+                    .append("div")
+                    .attr("class", "tooltip")
+                    .style("opacity", 0);
+
+                // 创建力导向图
+                const simulation = d3.forceSimulation(data.nodes)
+                    .force("link", d3.forceLink(data.links).id(d => d.name).distance(120))
+                    .force("charge", d3.forceManyBody().strength(-300))
+                    .force("center", d3.forceCenter(width / 2, height / 2))
+                    .force("collision", d3.forceCollide().radius(30));
+
+                // 创建链接
+                const link = svg.append("g")
+                    .selectAll("line")
+                    .data(data.links)
+                    .join("line")
+                    .attr("class", "link")
+                    .attr("stroke", d => linkColorMap[d.value])
+                    .attr("stroke-width", 2);
+
+                // 创建节点
+                const node = svg.append("g")
+                    .selectAll("circle")
+                    .data(data.nodes)
+                    .join("circle")
+                    .attr("class", "node")
+                    .attr("r", 30)
+                    .attr("fill", d => colorScale(d.group))
+                    .attr("stroke", "white")
+                    .attr("stroke-width", 2)
+                    .call(d3.drag()
+                        .on("start", dragstarted)
+                        .on("drag", dragged)
+                        .on("end", dragended));
+
+                // 创建节点上的图像
+                node.each(function(d) {
+                    const g = d3.select(this.parentNode).insert("g", "circle")
+                        .attr("transform", `translate(${d.x - 15}, ${d.y - 15})`);
+
+                    g.append("image")
+                        .attr("xlink:href", d.image)
+                        .attr("width", 30)
+                        .attr("height", 30);
+                });
+
+                // 创建节点名称
+                node.each(function(d) {
+                    d3.select(this.parentNode).append("text")
+                        .attr("x", d.x)
+                        .attr("y", d.y + 40)
+                        .attr("text-anchor", "middle")
+                        .attr("font-size", "12px")
+                        .text(d.name)
+                        .style("pointer-events", "none");
+                });
+
+                // 添加节点交互
+                node.on("mouseover", function(event, d) {
+                    d3.select(this)
+                        .attr("r", 35);
+                        
+                    tooltip.transition()
+                        .duration(200)
+                        .style("opacity", .9);
+                        
+                    tooltip.html(`<strong>${d.name}</strong><br>${d.introduce}`)
+                        .style("left", (event.pageX + 10) + "px")
+                        .style("top", (event.pageY - 28) + "px");
+                })
+                .on("mouseout", function(d) {
+                    d3.select(this)
+                        .attr("r", 30);
+                        
+                    tooltip.transition()
+                        .duration(500)
+                        .style("opacity", 0);
+                });
+
+                // 模拟更新
+                simulation.on("tick", () => {
+                    link
+                        .attr("x1", d => d.source.x)
+                        .attr("y1", d => d.source.y)
+                        .attr("x2", d => d.target.x)
+                        .attr("y2", d => d.target.y);
+
+                    node
+                        .attr("cx", d => d.x)
+                        .attr("cy", d => d.y);
+                });
+
+                // 拖拽事件处理
+                function dragstarted(event, d) {
+                    if (!event.active) simulation.alphaTarget(0.3).restart();
+                    d.fx = d.x;
+                    d.fy = d.y;
+                }
+
+                function dragged(event, d) {
+                    d.fx = event.x;
+                    d.fy = event.y;
+                }
+
+                function dragended(event, d) {
+                    if (!event.active) simulation.alphaTarget(0);
+                    d.fx = null;
+                    d.fy = null;
+                }
+
+                // 创建图例
+                const legend = d3.select("#legend");
+                
+                // 添加节点图例
+                const nodeTypes = new Set(data.nodes.map(d => d.group));
+                nodeTypes.forEach((group, i) => {
+                    const legendItem = legend.append("div")
+                        .attr("class", "legend-item");
+                        
+                    legendItem.append("div")
+                        .attr("class", "legend-color")
+                        .style("background-color", colorScale(group));
+                        
+                    legendItem.append("div")
+                        .text(getGroupName(group));
+                });
+                
+                // 添加链接图例
+                const linkTypes = new Set(data.links.map(d => d.value));
+                linkTypes.forEach(type => {
+                    const legendItem = legend.append("div")
+                        .attr("class", "legend-item");
+                        
+                    legendItem.append("div")
+                        .attr("class", "legend-color")
+                        .style("background-color", linkColorMap[type]);
+                        
+                    legendItem.append("div")
+                        .text(type);
+                });
+
+                // 获取组名
+                function getGroupName(group) {
+                    const names = [
+                        "茜茜公主",
+                        "弗朗茨·约瑟夫",
+                        "索菲皇大公夫人",
+                        "鲁道夫皇太子",
+                        "死神",
+                        "路切尼",
+                        "赫勒娜",
+                        "马克西米利安"
+                    ];
+                    return names[group];
+                }
+
+                // 添加缩放控制
+                d3.select("#zoom-in").on("click", () => {
+                    svg.transition()
+                        .duration(750)
+                        .call(zoom.scaleBy, 1.2);
+                });
+
+                d3.select("#zoom-out").on("click", () => {
+                    svg.transition()
+                        .duration(750)
+                        .call(zoom.scaleBy, 0.8);
+                });
+
+                d3.select("#reset-zoom").on("click", () => {
+                    svg.transition()
+                        .duration(750)
+                        .call(zoom.transform, d3.zoomIdentity);
+                });
+            })
+            .catch(error => {
+                console.error('加载JSON文件时出错:', error);
+                alert('加载JSON文件时出错，请检查文件路径是否正确。');
+            });
+    </script>
+</body>
+</html>
