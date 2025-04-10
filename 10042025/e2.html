@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>茜茜公主的人物关系图</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        /* 标题样式 */
+        .title-container {
+            background-color: #ff4757;
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        .title-container h1, .title-container h2, .title-container h3 {
+            margin: 10px 0;
+        }
+
+        .title-container h1 {
+            font-size: 48px;
+            font-weight: bold;
+        }
+
+        .title-container h2 {
+            font-size: 32px;
+            font-weight: normal;
+        }
+
+        .title-container h3 {
+            font-size: 24px;
+            font-weight: lighter;
+        }
+
+        /* 图文混排样式 */
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .content .image-text {
+            width: 300px;
+            margin: 15px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .content .image-text img {
+            width: 100%;
+            height: auto;
+        }
+
+        .content .image-text .text {
+            padding: 15px;
+            text-align: center;
+        }
+
+        /* SVG 力导向图容器 */
+        .graph-container {
+            width: 100%;
+            height: 600px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .content .image-text {
+                width: 90%;
+            }
+
+            .title-container h1 {
+                font-size: 36px;
+            }
+
+            .title-container h2 {
+                font-size: 24px;
+            }
+
+            .title-container h3 {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 标题部分 -->
+    <div class="title-container">
+        <h1>茜茜公主</h1>
+        <h2>人物关系图</h2>
+        <h3>探索茜茜公主的社交圈与关系网</h3>
+    </div>
+
+    <!-- 图文混排部分 -->
+    <div class="content">
+        <!-- 示例图文块 -->
+        <div class="image-text">
+            <img src="images/.qianqian.jpg" alt="茜茜公主">
+            <div class="text">
+                <h4>茜茜公主</h4>
+                <p>茜茜公主是故事的主角，拥有广泛的人脉和深厚的关系。</p>
+            </div>
+        </div>
+
+        <div class="image-text">
+            <img src="images/role1.jpg" alt="角色1">
+            <div class="text">
+                <h4>角色1</h4>
+                <p>角色1是茜茜公主的亲密好友，共同经历了许多冒险。</p>
+            </div>
+        </div>
+
+        <div class="image-text">
+            <img src="images/role2.jpg" alt="角色2">
+            <div class="text">
+                <h4>角色2</h4>
+                <p>角色2是茜茜公主的竞争对手，两人关系复杂微妙。</p>
+            </div>
+        </div>
+
+        <!-- 添加更多图文块根据需要 -->
+    </div>
+
+    <!-- 力导向图部分 -->
+    <div class="graph-container">
+        <svg width="100%" height="100%"></svg>
+    </div>
+
+    <!-- 引入 D3.js 库 -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script>
+        // 设置 SVG 尺寸
+        const svg = d3.select("svg"),
+              width = svg.node().getBoundingClientRect().width,
+              height = svg.node().getBoundingClientRect().height;
+
+        // 定义颜色比例
+        const color = d3.scaleOrdinal(d3.schemeCategory10);
+
+        // 定义力仿真
+        const simulation = d3.forceSimulation()
+            .force("link", d3.forceLink().id(d => d.id).distance(150))
+            .force("charge", d3.forceManyBody().strength(-300))
+            .force("center", d3.forceCenter(width / 2, height / 2))
+            .force("collision", d3.forceCollide().radius(d => (nodeDegree[d.id] || 1) * 2 + 5));
+
+        // 加载 JSON 数据
+        d3.json("eli.json").then(function(graph) {
+            // 计算每个节点的连边总和，用于调整节点大小
+            const nodeDegree = {};
+            graph.links.forEach(link => {
+                nodeDegree[link.source] = (nodeDegree[link.source] || 0) + link.value;
+                nodeDegree[link.target] = (nodeDegree[link.target] || 0) + link.value;
+            });
+
+            // 绘制链接
+            const link = svg.append("g")
+                .attr("class", "links")
+                .selectAll("line")
+                .data(graph.links)
+                .enter().append("line")
+                .attr("stroke", "#999")
+                .attr("stroke-opacity", 0.6)
+                .attr("stroke-width", d => Math.sqrt(d.value));
+
+            // 绘制节点
+            const node = svg.append("g")
+                .attr("class", "nodes")
+                .selectAll("circle")
+                .data(graph.nodes)
+                .enter().append("circle")
+                .attr("r", d => Math.sqrt(nodeDegree[d.id] || 1) * 2)
+                .attr("fill", d => color(d.id))
+                .call(d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended));
+
+            // 添加节点标签
+            const labels = svg.append("g")
+                .attr("class", "labels")
+                .selectAll("text")
+                .data(graph.nodes)
+                .enter().append("text")
+                .attr("dy", -3)
+                .attr("text-anchor", "middle")
+                .attr("font-size", "12px")
+                .text(d => d.id);
+
+            // 将节点和链接传递给力仿真
+            simulation
+                .nodes(graph.nodes)
+                .on("tick", ticked);
+
+            simulation.force("link")
+                .links(graph.links);
+
+            // 定义每一帧的更新
+            function ticked() {
+                link
+                    .attr("x1", d => d.source.x)
+                    .attr("y1", d => d.source.y)
+                    .attr("x2", d => d.target.x)
+                    .attr("y2", d => d.target.y);
+
+                node
+                    .attr("cx", d => d.x)
+                    .attr("cy", d => d.y);
+
+                labels
+                    .attr("x", d => d.x)
+                    .attr("y", d => d.y);
+            }
+
+            // 拖拽事件函数
+            function dragstarted(event, d) {
+                if (!event.active) simulation.alphaTarget(0.3).restart();
+                d.fx = d.x;
+                d.fy = d.y;
+            }
+
+            function dragged(event, d) {
+                d.fx = event.x;
+                d.fy = event.y;
+            }
+
+            function dragended(event, d) {
+                if (!event.active) simulation.alphaTarget(0);
+                d.fx = null;
+                d.fy = null;
+            }
+
+        }).catch(function(error){
+            console.error('加载 JSON 文件出错:', error);
+        });
+    </script>
+</body>
+</html>
