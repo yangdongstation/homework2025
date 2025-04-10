@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>《紫罗兰永恒花园》人物关系力导向图</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    /* 定义节点样式 */
+    circle {
+      fill: #ccc;
+      stroke: #000;
+      stroke-width: 1.5px;
+    }
+
+    /* 定义边的样式 */
+    line {
+      stroke: #999;
+      stroke-opacity: 0.6;
+    }
+
+    /* 定义标签样式 */
+    text {
+      font: 10px sans-serif;
+      pointer-events: none;
+      text-anchor: middle;
+    }
+  </style>
+</head>
+
+<body>
+  <svg width="960" height="500"></svg>
+  <script>
+    // 定义《紫罗兰永恒花园》的主要人物和他们之间的关系
+    const nodes = [
+      { id: "薇尔莉特·伊芙加登", name: "薇尔莉特·伊芙加登", size: 0 },
+      { id: "少佐基尔伯特", name: "少佐基尔伯特", size: 0 },
+      { id: "爱丽丝·卡娜莉斯", name: "爱丽丝·卡娜莉斯", size: 0 },
+      { id: "霍金斯·范·阿斯特雷", name: "霍金斯·范·阿斯特雷", size: 0 },
+      { id: "伊芙加登家的女仆", name: "伊芙加登家的女仆", size: 0 },
+    ];
+
+    const links = [
+      { source: "薇尔莉特·伊芙加登", target: "少佐基尔伯特", relationship: "主人与侍从，深厚情感" },
+      { source: "薇尔莉特·伊芙加登", target: "爱丽丝·卡娜莉斯", relationship: "同事与朋友关系" },
+      { source: "薇尔莉特·伊芙加登", target: "霍金斯·范·阿斯特雷", relationship: "上司与下属关系" },
+      { source: "薇尔莉特·伊芙加登", target: "伊芙加登家的女仆", relationship: "主仆关系" },
+      { source: "少佐基尔伯特", target: "霍金斯·范·阿斯特雷", relationship: "战友关系" },
+    ];
+
+    // 为每个节点计算其边的数量，用于设置节点大小
+    nodes.forEach(node => {
+      const inLinks = links.filter(link => link.target === node.id);
+      const outLinks = links.filter(link => link.source === node.id);
+      node.size = (inLinks.length + outLinks.length) * 5;
+    });
+
+    // 创建D3的力模拟
+    const simulation = d3.forceSimulation()
+     .nodes(nodes)
+     .on("tick", ticked);
+
+    // 调整 forceLink 的距离以扩大节点间距离
+    simulation.force("link", d3.forceLink(links).id(d => d.id).distance(150)); 
+    // 调整 forceManyBody 的强度以增加节点间排斥力
+    simulation.force("charge", d3.forceManyBody().strength(-500)); 
+    simulation.force("center", d3.forceCenter(480, 250));
+
+    // 选择SVG元素
+    const svg = d3.select("svg");
+
+    // 创建边
+    const link = svg.append("g")
+     .selectAll("line")
+     .data(links)
+     .join("line")
+     .attr("stroke-width", d => Math.sqrt(d.value));
+
+    // 创建边的标签
+    const linkLabels = svg.append("g")
+     .selectAll("text")
+     .data(links)
+     .join("text")
+     .text(d => d.relationship)
+     .attr("dy", 3)
+     .attr("fill", "#000");
+
+    // 创建节点
+    const node = svg.append("g")
+     .selectAll("circle")
+     .data(nodes)
+     .join("circle")
+     .attr("r", d => d.size)
+     .call(d3.drag()
+       .on("start", dragstarted)
+       .on("drag", dragged)
+       .on("end", dragended));
+
+    // 创建节点的标签
+    const nodeLabels = svg.append("g")
+     .selectAll("text")
+     .data(nodes)
+     .join("text")
+     .text(d => d.name)
+     .attr("dy", 3);
+
+    // 力模拟更新时的回调函数
+    function ticked() {
+      link
+       .attr("x1", d => d.source.x)
+       .attr("y1", d => d.source.y)
+       .attr("x2", d => d.target.x)
+       .attr("y2", d => d.target.y);
+
+      linkLabels
+       .attr("x", d => (d.source.x + d.target.x) / 2)
+       .attr("y", d => (d.source.y + d.target.y) / 2);
+
+      node
+       .attr("cx", d => d.x)
+       .attr("cy", d => d.y);
+
+      nodeLabels
+       .attr("x", d => d.x)
+       .attr("y", d => d.y);
+    }
+
+    // 拖动开始时的回调函数
+    function dragstarted(d) {
+      if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+      d.fx = d.x;
+      d.fy = d.y;
+    }
+
+    // 拖动时的回调函数
+    function dragged(d) {
+      d.fx = d3.event.x;
+      d.fy = d3.event.y;
+    }
+
+    // 拖动结束时的回调函数
+    function dragended(d) {
+      if (!d3.event.active) simulation.alphaTarget(0);
+      d.fx = null;
+      d.fy = null;
+    }
+  </script>
+</body>
+
+</html>    
