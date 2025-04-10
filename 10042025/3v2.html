@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>披萨各成分百分比</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            position: relative;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+        .chart {
+            margin: 20px;
+            position: relative;
+        }
+        text {
+            font-size: 12px;
+            text-anchor: middle;
+        }
+        .legend {
+            font-size: 12px;
+            display: flex; /* 始终显示图例 */
+            flex-direction: column;
+            align-items: flex-start;
+            margin-left: 20px;
+            position: relative;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            cursor: pointer;
+            position: relative;
+            opacity: 0.8; /* 默认不高亮 */
+            transition: opacity 0.3s;
+        }
+        .legend-item.highlight {
+            opacity: 1; /* 高亮显示 */
+        }
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            margin-right: 5px;
+        }
+        .signature {
+            margin-top: 20px;
+            width: 150px; /* 根据需要调整宽度 */
+            text-align: center;
+        }
+        .signature img {
+            max-width: 100%;
+            height: auto;
+        }
+        .highlight {
+            opacity: 0.8;
+            stroke: #000;
+            stroke-width: 2px;
+        }
+        .info-panel {
+            position: absolute;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            display: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: opacity 0.3s ease;
+            z-index: 10;
+            max-width: 200px;
+        }
+        #close-btn {
+            background: none;
+            border: none;
+            float: right;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>披萨饼各成分百分比</h1>
+    <div class="container">
+        <div id="chart3" class="chart"></div>
+        <div id="legend" class="legend"></div>
+    </div>
+    <div id="signature" class="signature">
+        <img src="http://diktator.my/sign.png" alt="Signature">
+    </div>
+    <div id="info-panel" class="info-panel">
+        <button id="close-btn">×</button>
+        <div id="info-content"></div>
+    </div>
+    <script>
+        const pizzaComposition = [
+            { name: "面粉", value: 40 },
+            { name: "水", value: 25 },
+            { name: "酵母", value: 5 },
+            { name: "盐", value: 3 },
+            { name: "橄榄油", value: 7 },
+            { name: "奶酪", value: 10 },
+            { name: "番茄酱", value: 10 }
+        ];
+
+        const width = 300;
+        const height = 300;
+        const radius = Math.min(width, height) / 2;
+
+        const colorScale = d3.scaleOrdinal()
+            .domain(pizzaComposition.map(d => d.name))
+            .range(["#f5deb3", "#8b4513", "#cd853f", "#a0522d", "#b8860b", "#ffd700", "#ff6347"]);
+
+        const svg3 = d3.select("#chart3")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .append("g")
+            .attr("transform", `translate(${width / 2}, ${height / 2})`);
+
+        const pie = d3.pie()
+            .value(d => d.value)
+            .sort(null);
+
+        const arcs = pie(pizzaComposition);
+
+        const arc = d3.arc()
+            .innerRadius(0)
+            .outerRadius(radius);
+
+        const path = svg3.selectAll("path")
+            .data(arcs)
+            .enter()
+            .append("path")
+            .attr("d", arc)
+            .attr("fill", d => colorScale(d.data.name))
+            .attr("class", "slice")
+            .attr("data-name", d => d.data.name)
+            .on("mouseover", function(event, d) {
+                d3.select(this)
+                    .attr("class", "slice highlight");
+            })
+            .on("mouseout", function(event, d) {
+                d3.select(this)
+                    .attr("class", "slice");
+            })
+            .on("click", function(event, d) {
+                showInfo(d.data);
+                highlightLegend(d.data.name);
+                positionInfoPanel(event);
+                event.stopPropagation(); // 阻止事件冒泡
+            });
+
+        svg3.selectAll("text")
+            .data(arcs)
+            .enter()
+            .append("text")
+            .attr("transform", d => {
+                const centroid = arc.centroid(d);
+                return `translate(${centroid})`;
+            })
+            .text(d => {
+                const total = d3.sum(pizzaComposition, item => item.value);
+                const percentage = Math.round((d.data.value / total) * 100);
+                return `${percentage}%`;
+            });
+
+        const legend = d3.select("#legend");
+        let currentItem = null;
+
+        pizzaComposition.forEach((item, index) => {
+            const legendItem = legend.append("div")
+                .attr("class", "legend-item")
+                .attr("id", `legend-${index}`)
+                .on("mouseover", function() {
+                    // 高亮显示对应的饼图部分
+                    d3.selectAll(".slice")
+                        .transition()
+                        .duration(200)
+                        .attr("class", d => 
+                            d.data.name === item.name ? "slice highlight" : "slice"
+                        );
+                })
+                .on("mouseout", function() {
+                    // 恢复所有饼图部分的原始样式
+                    d3.selectAll(".slice")
+                        .transition()
+                        .duration(200)
+                        .attr("class", "slice");
+                })
+                .on("click", function(event) {
+                    showInfo(item);
+                    highlightLegend(item.name);
+                    positionInfoPanel(event);
+                    event.stopPropagation(); // 阻止事件冒泡
+                });
+
+            legendItem.append("div")
+                .attr("class", "legend-color")
+                .style("background-color", colorScale(item.name));
+            legendItem.append("span")
+                .text(item.name);
+        });
+
+        // 创建信息面板
+        const infoPanel = d3.select("#info-panel");
+        const infoContent = d3.select("#info-content");
+
+        // 显示信息面板的函数
+        function showInfo(data) {
+            infoContent.html(`
+                <strong>${data.name}</strong><br>
+                比例: ${data.value}%
+            `);
+            infoPanel
+                .style("display", "block")
+                .style("opacity", 1);
+        }
+
+        // 高亮对应的图例项
+        function highlightLegend(name) {
+            d3.selectAll(".legend-item")
+                .style("opacity", 0.6) // 默认所有图例项透明度为0.6
+                .filter(function() {
+                    return d3.select(this).select("span").text() === name;
+                })
+                .style("opacity", 1); // 高亮对应图例项
+        }
+
+        // 显示信息面板在点击位置
+        function positionInfoPanel(event) {
+            const [x, y] = d3.pointer(event, document.body);
+            infoPanel
+                .style("left", `${x + 10}px`)
+                .style("top", `${y}px`);
+        }
+
+        // 关闭信息面板和恢复图例透明度
+        d3.select("#close-btn").on("click", () => {
+            infoPanel.style("display", "none");
+            d3.selectAll(".legend-item").style("opacity", 0.8); // 恢复默认透明度
+            currentItem = null;
+        });
+
+        // 点击页面其他地方关闭信息面板
+        d3.select("body").on("click", function(event) {
+            const infoPanelNode = infoPanel.node();
+            const clickedInside = infoPanelNode.contains(event.target) || 
+                                  d3.select(event.target).classed("legend-item") || 
+                                  d3.select(event.target).classed("slice") || 
+                                  d3.select(event.target).classed("legend-color");
+            if (!clickedInside) {
+                infoPanel.style("display", "none");
+                d3.selectAll(".legend-item").style("opacity", 0.8);
+                currentItem = null;
+            }
+        });
+    </script>
+</body>
+</html>
