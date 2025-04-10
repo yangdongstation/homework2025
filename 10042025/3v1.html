@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>茜茜公主人物关系力导向图</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    /* 定义节点样式 */
+    circle {
+      fill: #ccc;
+      stroke: #000;
+      stroke-width: 1.5px;
+    }
+
+    /* 定义边的样式 */
+    line {
+      stroke: #999;
+      stroke-opacity: 0.6;
+    }
+
+    /* 定义标签样式 */
+    text {
+      font: 10px sans-serif;
+      pointer-events: none;
+      text-anchor: middle;
+    }
+  </style>
+</head>
+
+<body>
+  <svg width="960" height="500"></svg>
+  <script>
+    // 定义茜茜公主的主要人物和他们之间的关系
+    const nodes = [
+      {
+        "id": 0,
+        "name": "茜茜公主（伊丽莎白）",
+        "group": 0,
+        "image": "茜茜公主.jpg",
+        "introduce": "奥地利皇后，崇尚自由、性格叛逆，与皇宫礼教格格不入，被称为茜茜公主。"
+      },
+      {
+        "id": 1,
+        "name": "弗朗茨·约瑟夫一世",
+        "group": 1,
+        "image": "弗朗茨.jpg",
+        "introduce": "奥地利皇帝，深深爱着茜茜，在母亲索菲与妻子之间左右为难。"
+      },
+      {
+        "id": 2,
+        "name": "索菲皇大公夫人",
+        "group": 2,
+        "image": "索菲.jpg",
+        "introduce": "弗朗茨的母亲，奥地利宫廷真正的掌权者，与儿媳茜茜公主因朝政与宫廷礼节屡生冲突。"
+      },
+      {
+        "id": 3,
+        "name": "鲁道夫皇太子",
+        "group": 3,
+        "image": "鲁道夫.jpg",
+        "introduce": "茜茜和弗朗茨之子，性格内向、被宫廷束缚，内心孤独彷徨。"
+      },
+      {
+        "id": 4,
+        "name": "死神（Der Tod）",
+        "group": 4,
+        "image": "死神.jpg",
+        "introduce": "象征死亡的神秘角色，贯穿全图，与茜茜和鲁道夫纠缠不清，既是诱惑又是解脱。"
+      },
+      {
+        "id": 5,
+        "name": "路切尼",
+        "group": 5,
+        "image": "路切尼.jpg",
+        "introduce": "刺杀茜茜公主的凶手，以旁白与回忆形式串联全图，嘲讽社会与历史。"
+      },
+      {
+        "id": 6,
+        "name": "赫勒娜",
+        "group": 6,
+        "image": "赫勒娜.jpg",
+        "introduce": "茜茜的姐姐，原本是索菲心中更符合皇后标准的人选，却意外让妹妹与弗朗茨结缘。"
+      },
+      {
+        "id": 7,
+        "name": "马克西米利安",
+        "group": 7,
+        "image": "马克西米利安.jpg",
+        "introduce": "巴伐利亚公爵，茜茜和赫勒娜的父亲，浪漫不羁，鼓励女儿们向往自由。"
+      }
+    ];
+
+    const links = [
+      { "source": 0, "target": 1, "value": 1, "relationship": "夫妻" },
+      { "source": 0, "target": 2, "value": 1, "relationship": "婆媳冲突" },
+      { "source": 1, "target": 2, "value": 1, "relationship": "母子" },
+      { "source": 0, "target": 3, "value": 1, "relationship": "母子" },
+      { "source": 1, "target": 3, "value": 1, "relationship": "父子" },
+      { "source": 0, "target": 4, "value": 1, "relationship": "纠缠" },
+      { "source": 3, "target": 4, "value": 1, "relationship": "诱惑" },
+      { "source": 0, "target": 5, "value": 1, "relationship": "刺杀（受害者与凶手）" },
+      { "source": 0, "target": 6, "value": 1, "relationship": "姐妹" },
+      { "source": 2, "target": 6, "value": 1, "relationship": "原本更中意的儿媳" },
+      { "source": 0, "target": 7, "value": 1, "relationship": "父女" },
+      { "source": 6, "target": 7, "value": 1, "relationship": "父女" }
+    ];
+
+    // 为每个节点计算其边的数量，用于设置节点大小
+    nodes.forEach(node => {
+      const inLinks = links.filter(link => link.target === node.id);
+      const outLinks = links.filter(link => link.source === node.id);
+      // 调整节点大小，避免节点和文字重叠
+      node.size = Math.max(10, (inLinks.length + outLinks.length) * 4);
+    });
+
+    // 创建D3的力模拟
+    const simulation = d3.forceSimulation()
+      .nodes(nodes)
+      .on("tick", ticked);
+
+    // 增加节点间距离
+    simulation.force("link", d3.forceLink(links).id(d => d.id).distance(200)); 
+    // 增加节点间排斥力
+    simulation.force("charge", d3.forceManyBody().strength(-800)); 
+    simulation.force("center", d3.forceCenter(480, 250));
+
+    // 选择SVG元素
+    const svg = d3.select("svg");
+
+    // 创建边
+    const link = svg.append("g")
+      .selectAll("line")
+      .data(links)
+      .join("line")
+      .attr("stroke-width", d => Math.sqrt(d.value));
+
+    // 创建边的标签
+    const linkLabels = svg.append("g")
+      .selectAll("text")
+      .data(links)
+      .join("text")
+      .text(d => d.relationship)
+      .attr("dy", 3)
+      .attr("fill", "#000");
+
+    // 创建节点
+    const node = svg.append("g")
+      .selectAll("circle")
+      .data(nodes)
+      .join("circle")
+      .attr("r", d => d.size)
+      .call(d3.drag()
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended));
+
+    // 创建节点的标签
+    const nodeLabels = svg.append("g")
+      .selectAll("text")
+      .data(nodes)
+      .join("text")
+      .text(d => d.name)
+      .attr("dy", d => d.size + 5); // 调整文字与节点的间距
+
+    // 力模拟更新时的回调函数
+    function ticked() {
+      link
+        .attr("x1", d => d.source.x)
+        .attr("y1", d => d.source.y)
+        .attr("x2", d => d.target.x)
+        .attr("y2", d => d.target.y);
+
+      linkLabels
+        .attr("x", d => (d.source.x + d.target.x) / 2)
+        .attr("y", d => (d.source.y + d.target.y) / 2);
+
+      node
+        .attr("cx", d => d.x)
+        .attr("cy", d => d.y);
+
+      nodeLabels
+        .attr("x", d => d.x)
+        .attr("y", d => d.y + d.size + 5); // 确保文字在节点下方
+    }
+
+    // 拖动开始时的回调函数
+    function dragstarted(d) {
+      if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+      d.fx = d.x;
+      d.fy = d.y;
+    }
+
+    // 拖动时的回调函数
+    function dragged(d) {
+      d.fx = d3.event.x;
+      d.fy = d3.event.y;
+    }
+
+    // 拖动结束时的回调函数
+    function dragended(d) {
+      if (!d3.event.active) simulation.alphaTarget(0);
+      d.fx = null;
+      d.fy = null;
+    }
+  </script>
+</body>
+
+</html>
