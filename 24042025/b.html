@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Force-Directed Graph</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        #graph-container {
+            background-color: white;
+        }
+        .node {
+            cursor: move;
+            fill: #fff;
+            stroke: steelblue;
+            stroke-width: 3px;
+        }
+        .link {
+            stroke: #999;
+            stroke-opacity: 0.6;
+        }
+        .node-text {
+            pointer-events: none;
+            font-size: 14px;
+            text-anchor: middle;
+        }
+    </style>
+</head>
+<body>
+    <div id="graph-container"></div>
+
+    <script>
+        // 设置画布尺寸
+        const width = 800;
+        const height = 500;
+        const margin = { top: 40, right: 40, bottom: 40, left: 40 };
+        const innerWidth = width - margin.left - margin.right;
+        const innerHeight = height - margin.top - margin.bottom;
+
+        // 创建SVG容器
+        const svg = d3.select("#graph-container")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        // 从JSON文件加载数据
+        d3.json("d.json").then(function(data) {
+            // 提取节点和连线
+            const nodes = data.nodes;
+            const links = data.links;
+
+            // 定义力导向图
+            const simulation = d3.forceSimulation(nodes)
+                .force("link", d3.forceLink(links).id(d => d.id).distance(100))
+                .force("charge", d3.forceManyBody().strength(-100))
+                .force("center", d3.forceCenter(innerWidth / 2, innerHeight / 2));
+
+            // 绘制连线
+            const link = svg.append("g")
+                .selectAll("line")
+                .data(links)
+                .enter()
+                .append("line")
+                .attr("class", "link");
+
+            // 绘制节点
+            const node = svg.append("g")
+                .selectAll("circle")
+                .data(nodes)
+                .enter()
+                .append("circle")
+                .attr("class", "node")
+                .attr("r", 10)
+                .call(d3.drag()
+                    .on("start", dragStarted)
+                    .on("drag", dragged)
+                    .on("end", dragEnded));
+
+            // 添加节点文字
+            const nodeText = svg.append("g")
+                .selectAll("text")
+                .data(nodes)
+                .enter()
+                .append("text")
+                .attr("class", "node-text")
+                .attr("dy", "0.35em")
+                .text(d => d.name);
+
+            // 更新力导向图布局
+            simulation.on("tick", function() {
+                link
+                    .attr("x1", d => d.source.x)
+                    .attr("y1", d => d.source.y)
+                    .attr("x2", d => d.target.x)
+                    .attr("y2", d => d.target.y);
+
+                node
+                    .attr("cx", d => d.x)
+                    .attr("cy", d => d.y);
+
+                nodeText
+                    .attr("x", d => d.x)
+                    .attr("y", d => d.y);
+            });
+
+            // 拖动事件处理函数
+            function dragStarted(event, d) {
+                if (!event.active) simulation.alphaTarget(0.3).restart();
+                d.fx = d.x;
+                d.fy = d.y;
+            }
+
+            function dragged(event, d) {
+                d.fx = event.x;
+                d.fy = event.y;
+            }
+
+            function dragEnded(event, d) {
+                if (!event.active) simulation.alphaTarget(0);
+                d.fx = null;
+                d.fy = null;
+            }
+        }).catch(function(error) {
+            console.log("Error loading the JSON file:", error);
+        });
+    </script>
+</body>
+</html>
