@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tree Visualization</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        #tree-container {
+            width: 960px;
+            height: 500px;
+            background-color: white;
+        }
+        .node circle {
+            fill: #fff;
+            stroke: steelblue;
+            stroke-width: 3px;
+        }
+        .node text {
+            font: 12px sans-serif;
+        }
+        .link {
+            fill: none;
+            stroke: #ccc;
+            stroke-width: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div id="tree-container"></div>
+
+    <script>
+        // 设置画布尺寸
+        const width = 960;
+        const height = 500;
+
+        // 创建SVG元素
+        const svg = d3.select("#tree-container")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        // 定义树布局
+        const treeLayout = d3.tree()
+            .size([height, width - 160]);
+
+        // 读取本地JSON数据
+        d3.json("d.json").then(function(data) {
+            // 创建层次结构数据
+            const root = d3.hierarchy(data);
+
+            // 更新树布局
+            treeLayout(root);
+
+            // 居中调整
+            const x0 = root.x0 = height / 2;
+            const y0 = root.y0 = 0;
+
+            // 更新所有节点的位置
+            function update(source) {
+                // 节点的布局位置
+                const nodes = root.descendants();
+                const links = root.links();
+
+                // 更新节点位置
+                svg.selectAll("g.node")
+                    .data(nodes)
+                    .join("g")
+                    .attr("class", "node")
+                    .attr("transform", d => `translate(${d.y},${d.x})`);
+
+                // 绘制连接线
+                const link = svg.selectAll("path.link")
+                    .data(links)
+                    .join("path")
+                    .attr("class", "link")
+                    .attr("d", d => {
+                        const sourceY = d.source.y;
+                        const sourceX = d.source.x;
+                        const targetY = d.target.y;
+                        const targetX = d.target.x;
+                        return `M ${sourceY} ${sourceX} C ${(sourceY + targetY) / 2} ${sourceX}, ${(sourceY + targetY) / 2} ${targetX}, ${targetY} ${targetX}`;
+                    });
+
+                // 绘制节点
+                svg.selectAll("g.node")
+                    .append("circle")
+                    .attr("r", 10)
+                    .style("fill", "#fff")
+                    .style("stroke", "steelblue")
+                    .style("stroke-width", "3px");
+
+                // 绘制节点文本
+                svg.selectAll("g.node")
+                    .append("text")
+                    .attr("dx", d => d.children ? -13 : 13)
+                    .attr("dy", ".35em")
+                    .attr("text-anchor", d => d.children ? "end" : "start")
+                    .text(d => d.data.name);
+            }
+
+            // 初始调用更新函数
+            update(root);
+
+        }).catch(function(error) {
+            console.log("Error loading the JSON file:", error);
+        });
+    </script>
+</body>
+</html>
