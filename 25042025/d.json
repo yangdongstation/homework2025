@@ -1,0 +1,304 @@
+{
+  "name": "披萨",
+  "children": [
+    {
+      "name": "面团",
+      "proportion": 30,
+      "children": [
+        {
+          "name": "面粉",
+          "type": "string",
+          "index": "ingredient",
+          "value": "面粉",
+          "proportion": 70
+        },
+        {
+          "name": "水",
+          "type": "string",
+          "index": "ingredient",
+          "value": "水",
+          "proportion": 25
+        },
+        {
+          "name": "酵母",
+          "type": "string",
+          "index": "ingredient",
+          "value": "酵母",
+          "proportion": 3
+        },
+        {
+          "name": "盐",
+          "type": "string",
+          "index": "ingredient",
+          "value": "盐",
+          "proportion": 1
+        },
+        {
+          "name": "橄榄油",
+          "type": "string",
+          "index": "ingredient",
+          "value": "橄榄油",
+          "proportion": 1
+        }
+      ]
+    },
+    {
+      "name": "酱料",
+      "proportion": 15,
+      "children": [
+        {
+          "name": "番茄酱",
+          "type": "string",
+          "index": "ingredient",
+          "value": "番茄酱",
+          "proportion": 50
+        },
+        {
+          "name": "番茄泥",
+          "type": "string",
+          "index": "ingredient",
+          "value": "番茄泥",
+          "proportion": 30
+        },
+        {
+          "name": "蒜末",
+          "type": "string",
+          "index": "ingredient",
+          "value": "蒜末",
+          "proportion": 10
+        },
+        {
+          "name": "洋葱",
+          "type": "string",
+          "index": "ingredient",
+          "value": "洋葱",
+          "proportion": 7
+        },
+        {
+          "name": "罗勒",
+          "type": "string",
+          "index": "ingredient",
+          "value": "罗勒",
+          "proportion": 3
+        }
+      ]
+    },
+    {
+      "name": "奶酪",
+      "proportion": 25,
+      "children": [
+        {
+          "name": "马苏里拉奶酪",
+          "type": "string",
+          "index": "ingredient",
+          "value": "马苏里拉奶酪",
+          "proportion": 60
+        },
+        {
+          "name": "帕尔马奶酪",
+          "type": "string",
+          "index": "ingredient",
+          "value": "帕尔马奶酪",
+          "proportion": 30
+        },
+        {
+          "name": "羊乳酪",
+          "type": "string",
+          "index": "ingredient",
+          "value": "羊乳酪",
+          "proportion": 10
+        }
+      ]
+    },
+    {
+      "name": "配料",
+      "proportion": 30,
+      "children": [
+        {
+          "name": "肉类",
+          "proportion": 40,
+          "children": [
+            {
+              "name": "意大利香肠",
+              "type": "string",
+              "index": "ingredient",
+              "value": "意大利香肠",
+              "proportion": 30
+            },
+            {
+              "name": "火腿",
+              "type": "string",
+              "index": "ingredient",
+              "value": "火腿",
+              "proportion": 25
+            },
+            {
+              "name": "培根",
+              "type": "string",
+              "index": "ingredient",
+              "value": "培根",
+              "proportion": 20
+            },
+            {
+              "name": "牛肉",
+              "type": "string",
+              "index": "ingredient",
+              "value": "牛肉",
+              "proportion": 15
+            },
+            {
+              "name": "鸡肉",
+              "type": "string",
+              "index": "ingredient",
+              "value": "鸡肉",
+              "proportion": 10
+            }
+          ]
+        },
+        {
+          "name": "蔬菜",
+          "proportion": 30,
+          "children": [
+            {
+              "name": "蘑菇",
+              "type": "string",
+              "index": "ingredient",
+              "value": "蘑菇",
+              "proportion": 25
+            },
+            {
+              "name": "菠菜",
+              "type": "string",
+              "index": "ingredient",
+              "value": "菠菜",
+              "proportion": 20
+            },
+            {
+              "name": "青椒",
+              "type": "string",
+              "index": "ingredient",
+              "value": "青椒",
+              "proportion": 20
+            },
+            {
+              "name": "洋葱",
+              "type": "string",
+              "index": "ingredient",
+              "value": "洋葱",
+              "proportion": 20
+            },
+            {
+              "name": "橄榄",
+              "type": "string",
+              "index": "ingredient",
+              "value": "橄榄",
+              "proportion": 15
+            }
+          ]
+        },
+        {
+          "name": "海鲜",
+          "proportion": 15,
+          "children": [
+            {
+              "name": "虾",
+              "type": "string",
+              "index": "ingredient",
+              "value": "虾",
+              "proportion": 30
+            },
+            {
+              "name": "贻贝",
+              "type": "string",
+              "index": "ingredient",
+              "value": "贻贝",
+              "proportion": 25
+            },
+            {
+              "name": "鱿鱼",
+              "type": "string",
+              "index": "ingredient",
+              "value": "鱿鱼",
+              "proportion": 25
+            },
+            {
+              "name": "金枪鱼",
+              "type": "string",
+              "index": "ingredient",
+              "value": "金枪鱼",
+              "proportion": 20
+            }
+          ]
+        },
+        {
+          "name": "香料",
+          "proportion": 10,
+          "children": [
+            {
+              "name": "牛至",
+              "type": "string",
+              "index": "ingredient",
+              "value": "牛至",
+              "proportion": 40
+            },
+            {
+              "name": "干罗勒",
+              "type": "string",
+              "index": "ingredient",
+              "value": "干罗勒",
+              "proportion": 30
+            },
+            {
+              "name": "红辣椒粉",
+              "type": "string",
+              "index": "ingredient",
+              "value": "红辣椒粉",
+              "proportion": 20
+            },
+            {
+              "name": "黑胡椒",
+              "type": "string",
+              "index": "ingredient",
+              "value": "黑胡椒",
+              "proportion": 10
+            }
+          ]
+        },
+        {
+          "name": "其他",
+          "proportion": 5,
+          "children": [
+            {
+              "name": "松露油",
+              "type": "string",
+              "index": "ingredient",
+              "value": "松露油",
+              "proportion": 25
+            },
+            {
+              "name": "蜂蜜",
+              "type": "string",
+              "index": "ingredient",
+              "value": "蜂蜜",
+              "proportion": 25
+            },
+            {
+              "name": "香肠片",
+              "type": "string",
+              "index": "ingredient",
+              "value": "香肠片",
+              "proportion": 25
+            },
+            {
+              "name": "莫扎里拉奶酪球",
+              "type": "string",
+              "index": "ingredient",
+              "value": "莫扎里拉奶酪球",
+              "proportion": 25
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
