@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF - 8">
+    <meta name="viewport" content="width=device - width, initial - scale = 1.0">
+    <title>Tree Diagram without D3.js</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="tree - canvas"></canvas>
+    <script>
+        const canvas = document.getElementById('tree - canvas');
+        const ctx = canvas.getContext('2d');
+        const margin = 50;
+        const maxWidth = window.innerWidth - 2 * margin;
+        const maxHeight = window.innerHeight - 2 * margin;
+        canvas.width = maxWidth + 2 * margin;
+        canvas.height = maxHeight + 2 * margin;
+
+        let jsonData;
+        const nodeRadius = 10;
+        const textPadding = 5;
+        const lineWidth = 2;
+        const nodeSpacingX = 150;
+        const nodeSpacingY = 50;
+
+        function loadJSON() {
+            return new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', 'd.json', true);
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            jsonData = JSON.parse(xhr.responseText);
+                            resolve();
+                        } else {
+                            reject(new Error('Error loading JSON'));
+                        }
+                    }
+                };
+                xhr.send();
+            });
+        }
+
+        function drawNode(x, y, text, hasChildren) {
+            ctx.beginPath();
+            ctx.arc(x, y, nodeRadius, 0, 2 * Math.PI);
+            ctx.fillStyle = hasChildren? 'lightblue' : 'orange';
+            ctx.fill();
+            ctx.lineWidth = lineWidth;
+            ctx.strokeStyle = 'black';
+            ctx.stroke();
+
+            const textWidth = ctx.measureText(text).width;
+            ctx.fillText(text, x - textWidth / 2, y + textPadding);
+        }
+
+        function drawLink(x1, y1, x2, y2) {
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.lineWidth = lineWidth;
+            ctx.strokeStyle = 'gray';
+            ctx.stroke();
+        }
+
+        function drawTree(data, x, y, level) {
+            const newX = x + level * nodeSpacingX;
+            drawNode(newX, y, data.name, data.children && data.children.length > 0);
+            if (data.children) {
+                const childCount = data.children.length;
+                const ySpacing = (childCount > 1)? nodeSpacingY : 0;
+                let childY = y - (childCount - 1) * ySpacing / 2;
+                data.children.forEach(child => {
+                    drawLink(newX, y, newX + nodeSpacingX / 2, childY);
+                    drawTree(child, newX, childY, level + 1);
+                    childY += ySpacing;
+                });
+            }
+        }
+
+        loadJSON().then(() => {
+            drawTree(jsonData, margin, margin, 0);
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+    </script>
+</body>
+
+</html>
