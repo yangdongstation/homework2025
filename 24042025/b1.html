@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF - 8">
+    <meta name="viewport" content="width=device - width, initial - scale = 1.0">
+    <title>Force - Directed Graph of Les Misérables</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+
+<body>
+    <div id="graph - container"></div>
+    <script>
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        const svg = d3.select("#graph - container")
+          .append("svg")
+          .attr("width", width)
+          .attr("height", height);
+
+        const simulation = d3.forceSimulation()
+          .force("link", d3.forceLink().id(d => d.id))
+          .force("charge", d3.forceManyBody())
+          .force("center", d3.forceCenter(width / 2, height / 2));
+
+
+        d3.json('d.json')
+         .then(data => {
+                function flattenJsonToNodesEdges(data, parentId = null) {
+                    let nodes = [];
+                    let edges = [];
+                    if (typeof data === 'object' && 'name' in data) {
+                        const newNode = {
+                            id: data.name,
+                            type: data.type
+                        };
+                        nodes.push(newNode);
+                        if (parentId) {
+                            edges.push({ source: parentId, target: newNode.id });
+                        }
+                        if ('children' in data) {
+                            data.children.forEach(child => {
+                                const childNodesEdges = flattenJsonToNodesEdges(child, newNode.id);
+                                nodes = nodes.concat(childNodesEdges.nodes);
+                                edges = edges.concat(childNodesEdges.edges);
+                            });
+                        }
+                    }
+                    return { nodes, edges };
+                }
+
+
+                const { nodes, edges } = flattenJsonToNodesEdges(data);
+
+
+                const link = svg.selectAll("line")
+                  .data(edges)
+                  .join("line")
+                  .attr("stroke", "#999")
+                  .attr("stroke - width", 1);
+
+                const node = svg.selectAll("circle")
+                  .data(nodes)
+                  .join("circle")
+                  .attr("r", 5)
+                  .attr("fill", "#69b3a2");
+
+
+                simulation
+                  .nodes(nodes)
+                  .on("tick", ticked);
+
+                simulation.force("link")
+                  .links(edges);
+
+
+                function ticked() {
+                    link
+                      .attr("x1", d => d.source.x)
+                      .attr("y1", d => d.source.y)
+                      .attr("x2", d => d.target.x)
+                      .attr("y2", d => d.target.y);
+
+                    node
+                      .attr("cx", d => d.x)
+                      .attr("cy", d => d.y);
+                }
+            });
+    </script>
+</body>
+
+</html>
