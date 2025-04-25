@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizza Ingredients Circle Packing</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .node {
+            cursor: pointer;
+        }
+        .node circle {
+            stroke: #fff;
+            stroke-width: 1.5px;
+        }
+        .node text {
+            font-size: 12px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="chart"></div>
+
+    <script>
+        var width = 800,
+            height = 600;
+
+        // 创建颜色比例尺
+        var color = d3.scale.category10();
+
+        // 创建层次结构布局
+        var partition = d3.layout.partition()
+            .size([2 * Math.PI, height * .8])
+            .value(function(d) { return d.proportion; });
+
+        // 创建circle packing布局
+        var pack = d3.layout.pack()
+            .size([width, height])
+            .padding(2);
+
+        // 创建SVG容器
+        var svg = d3.select("#chart").append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        // 加载JSON数据
+        d3.json("d.json", function(error, root) {
+            if (error) throw error;
+
+            // 创建层次结构并布局
+            var nodes = partition.nodes(root);
+
+            // 创建circle packing布局
+            var nodes = pack.nodes(nodes[0]);
+
+            // 创建每个节点
+            var node = svg.selectAll(".node")
+                .data(nodes)
+                .enter().append("g")
+                .attr("class", "node")
+                .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+            // 添加圆形
+            node.append("circle")
+                .attr("r", function(d) { return d.r; })
+                .style("fill", function(d) { return color(d.parent ? d.parent.name : d.name); })
+                .style("stroke-width", function(d) { return !d.children ? 2 : 0; });
+
+            // 添加标签
+            node.append("text")
+                .attr("text-anchor", "middle")
+                .attr("dy", ".35em")
+                .text(function(d) { return d.name; })
+                .style("opacity", function(d) { return d.r > 20 ? 1 : 0; }); // 只在较大的圆中显示标签
+        });
+    </script>
+</body>
+</html>
