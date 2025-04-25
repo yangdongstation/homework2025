@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizza Ingredients Treemap</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .node {
+            cursor: pointer;
+            font-size: 10px;
+        }
+        .node:hover {
+            stroke: #000;
+            stroke-width: 2px;
+        }
+        .label {
+            font-weight: normal;
+        }
+        .parent {
+            font-weight: bold;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div id="chart"></div>
+
+    <script>
+        var width = 800,
+            height = 600;
+
+        // 创建颜色比例尺，为每个分类分配不同的颜色
+        var color = d3.scale.category10();
+
+        // 创建树图布局
+        var treemap = d3.layout.treemap()
+            .size([width, height])
+            .padding(4)
+            .value(function(d) { return d.proportion; }); // 使用比例进行尺寸计算
+
+        // 创建SVG容器
+        var svg = d3.select("#chart").append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        // 加载JSON数据
+        d3.json("d.json", function(error, root) {
+            if (error) throw error;
+
+            // 创建层次结构并布局树图
+            var nodes = treemap.nodes(root);
+
+            // 为每个叶子节点（末端节点）创建矩形
+            var leafNodes = nodes.filter(function(d) { return !d.children; });
+            
+            svg.selectAll(".node")
+                .data(leafNodes)
+                .enter().append("g")
+                .attr("class", "node")
+                .append("rect")
+                .attr("x", function(d) { return d.x; })
+                .attr("y", function(d) { return d.y; })
+                .attr("width", function(d) { return d.dx; })
+                .attr("height", function(d) { return d.dy; })
+                .attr("fill", function(d) { return color(d.parent.name); }) // 根据父节点名称分配颜色
+                .attr("title", function(d) { return d.name + ": " + d.proportion + "%"; });
+
+            // 添加文字标签到叶子节点
+            svg.selectAll(".node")
+                .data(leafNodes)
+                .enter().append("text")
+                .attr("class", "label")
+                .attr("x", function(d) { return d.x + d.dx / 2; })
+                .attr("y", function(d) { return d.y + d.dy / 2; })
+                .attr("dy", ".35em")
+                .attr("text-anchor", "middle")
+                .text(function(d) { return d.name; })
+                .attr("fill", function(d) { return d.dx * d.dy / 1000 > 1 ? "#000" : "#fff"; }); // 根据面积设置文字颜色
+
+            // 为父节点添加标签
+            var parentNodes = nodes.filter(function(d) { return d.children; });
+            
+            svg.selectAll(".parent")
+                .data(parentNodes)
+                .enter().append("text")
+                .attr("class", "parent")
+                .attr("x", function(d) { return d.x + d.dx / 2; })
+                .attr("y", function(d) { return d.y + 20; })
+                .attr("text-anchor", "middle")
+                .text(function(d) { return d.name; });
+        });
+    </script>
+</body>
+</html>
