@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radial Tree Pizza Ingredients</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+    <style>
+        .node circle {
+            fill: #fff;
+            stroke: steelblue;
+            stroke-width: 1.5px;
+        }
+        .node text {
+            font: 10px sans-serif;
+        }
+        .link {
+            fill: none;
+            stroke: #ccc;
+            stroke-width: 1.5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="chart"></div>
+
+    <script>
+        var width = 960,
+            height = 960,
+            radius = Math.min(width, height) / 2;
+
+        var tree = d3.layout.tree()
+            .size([2 * Math.PI, radius - 120]);
+
+        var diagonal = d3.svg.diagonal.radial()
+            .projection(function(d) { return [d.y, d.x / Math.PI * 180]; });
+
+        var svg = d3.select("#chart").append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .append("g")
+            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+        d3.json("d.json", function(error, root) {
+            if (error) throw error;
+
+            var nodes = tree.nodes(root),
+                links = tree.links(nodes);
+
+            // Create links
+            var link = svg.selectAll("path.link")
+                .data(links)
+                .enter().append("path")
+                .attr("class", "link")
+                .attr("d", diagonal);
+
+            // Create nodes with labels and lines
+            var node = svg.selectAll("g.node")
+                .data(nodes)
+                .enter().append("g")
+                .attr("class", "node")
+                .attr("transform", function(d) {
+                    return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")";
+                });
+
+            // Add circles to nodes
+            node.append("circle")
+                .attr("r", 4.5);
+
+            // Add lines from node to text
+            node.append("line")
+                .attr("x1", 0)
+                .attr("y1", 0)
+                .attr("x2", function(d) { return d.x < 180 ? 8 : -8; })
+                .attr("y2", 0)
+                .style("stroke", "#ccc")
+                .style("stroke-width", 1.5);
+
+            // Add text labels
+            node.append("text")
+                .attr("dy", ".31em")
+                .attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
+                .attr("transform", function(d) {
+                    var angle = d.x - 90;
+                    var textAngle = angle > 90 || angle < -90 ? angle - 180 : angle;
+                    return "rotate(" + textAngle + ")";
+                })
+                .attr("x", function(d) { return d.x < 180 ? 10 : -10; })
+                .attr("y", 0)
+                .text(function(d) { return d.name; });
+        });
+    </script>
+</body>
+</html>
