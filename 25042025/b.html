@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizza Ingredients Treemap</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+    <style>
+        .node {
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .node:hover {
+            stroke: #fff;
+            stroke-width: 2px;
+        }
+        
+        .label {
+            font-family: Arial, sans-serif;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="chart"></div>
+
+    <script>
+        // Set up dimensions
+        var width = 800,
+            height = 600;
+
+        // Create color scale
+        var color = d3.scale.category10();
+
+        // Create treemap layout
+        var treemap = d3.layout.treemap()
+            .size([width, height])
+            .padding(4)
+            .value(function(d) { return d.proportion; }); // Use proportion for sizing
+
+        // Create SVG canvas
+        var svg = d3.select("#chart").append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        // Load JSON data
+        d3.json("d.json", function(error, root) {
+            if (error) throw error;
+
+            // Create hierarchy from data
+            var nodes = treemap.nodes(root)
+                .filter(function(d) { return !d.children; }); // Filter out non-leaf nodes
+
+            // Create rect for each node
+            var node = svg.selectAll(".node")
+                .data(nodes)
+                .enter().append("g")
+                .attr("class", "node");
+
+            node.append("rect")
+                .attr("x", function(d) { return d.x; })
+                .attr("y", function(d) { return d.y; })
+                .attr("width", function(d) { return d.dx; })
+                .attr("height", function(d) { return d.dy; })
+                .attr("fill", function(d) { return color(d.parent.name); })
+                .attr("title", function(d) { return d.name + ": " + d.proportion + "%"; });
+
+            // Add text labels
+            node.append("text")
+                .attr("class", "label")
+                .attr("x", function(d) { return d.x + d.dx / 2; })
+                .attr("y", function(d) { return d.y + d.dy / 2; })
+                .attr("dy", ".35em")
+                .attr("text-anchor", "middle")
+                .text(function(d) { return d.name + " (" + d.proportion + "%)"; });
+
+            // Add title for parent nodes if needed
+            var parentNodes = treemap.nodes(root)
+                .filter(function(d) { return d.children; });
+
+            svg.selectAll(".parent")
+                .data(parentNodes)
+                .enter().append("text")
+                .attr("class", "parent")
+                .attr("x", function(d) { return d.x + d.dx / 2; })
+                .attr("y", function(d) { return d.y + 20; })
+                .attr("dy", ".35em")
+                .attr("text-anchor", "middle")
+                .style("font-weight", "bold")
+                .text(function(d) { return d.name; });
+        });
+    </script>
+</body>
+</html>
