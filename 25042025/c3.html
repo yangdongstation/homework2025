@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizza Ingredients Tidy Tree</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .node {
+            cursor: pointer;
+        }
+        .node circle {
+            fill: #fff;
+            stroke-width: 1.5px;
+        }
+        .node text {
+            font-size: 11px;
+        }
+        .link {
+            fill: none;
+            stroke: #ccc;
+            stroke-width: 1.5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="chart"></div>
+
+    <script>
+        var width = 800,
+            height = 500;
+
+        // 创建一个颜色比例尺
+        var color = d3.scale.category10();
+
+        // 创建树布局
+        var tree = d3.layout.tree()
+            .size([height, width - 160]);
+
+        // 创建对角线投影用于连接线
+        var diagonal = d3.svg.diagonal()
+            .projection(function(d) { return [d.y, d.x]; });
+
+        // 创建SVG容器
+        var svg = d3.select("#chart").append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .append("g")
+            .attr("transform", "translate(40,0)");
+
+        // 加载JSON数据
+        d3.json("d.json", function(error, root) {
+            if (error) throw error;
+
+            // 创建节点和链接
+            var nodes = tree.nodes(root),
+                links = tree.links(nodes);
+
+            // 创建链接
+            var link = svg.selectAll("path.link")
+                .data(links)
+                .enter().append("path")
+                .attr("class", "link")
+                .attr("d", diagonal);
+
+            // 创建节点
+            var node = svg.selectAll("g.node")
+                .data(nodes)
+                .enter().append("g")
+                .attr("class", "node")
+                .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
+
+            // 添加节点圆圈
+            node.append("circle")
+                .attr("r", 4.5)
+                .style("fill", function(d) { return d.children ? color(d.name) : "white"; })
+                .style("stroke", function(d) { return d.children ? color(d.name) : "#ccc"; });
+
+            // 添加连接线到节点的文本
+            node.append("text")
+                .attr("dx", function(d) { return d.children ? -8 : 8; })
+                .attr("dy", 3)
+                .attr("text-anchor", function(d) { return d.children ? "end" : "start"; })
+                .text(function(d) { return d.name; })
+                .style("fill", function(d) { return d.children ? "#fff" : "#000"; });
+        });
+    </script>
+</body>
+</html>
