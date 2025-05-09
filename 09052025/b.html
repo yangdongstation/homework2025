@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>泡泡树图 - 优化布局</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            background-color: #D2B48C; /* 褐色背景 */
+            font-family: Arial, sans-serif;
+        }
+        .bubble {
+            text-anchor: middle;
+        }
+        .bubble text {
+            font-size: 10px;
+            fill: #000; /* 黑色文字 */
+            alignment-baseline: middle;
+        }
+        .bubble circle {
+            stroke-width: 1;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center; color: #000;">披萨成分泡泡树图</h1>
+    <div id="chart" style="width: 960px; height: 600px; margin: auto;"></div>
+
+    <script>
+        const data = {
+            "name": "披萨成分",
+            "children": [
+                {
+                    "name": "基础原料",
+                    "children": [
+                        { "name": "面粉", "value": 20 },
+                        { "name": "水", "value": 10 },
+                        { "name": "酵母", "value": 1 },
+                        { "name": "盐", "value": 0.5 },
+                        { "name": "橄榄油", "value": 1 }
+                    ]
+                },
+                {
+                    "name": "调味料",
+                    "children": [
+                        { "name": "番茄酱", "value": 15 },
+                        { "name": "大蒜粉", "value": 1 },
+                        { "name": "洋葱粉", "value": 1 },
+                        { "name": "干牛至", "value": 0.5 },
+                        { "name": "黑胡椒碎", "value": 0.5 }
+                    ]
+                },
+                {
+                    "name": "配料",
+                    "children": [
+                        { "name": "马苏里拉奶酪", "value": 20 },
+                        { "name": "帕玛森奶酪", "value": 5 },
+                        { "name": "洋葱", "value": 5 },
+                        { "name": "青椒", "value": 5 },
+                        { "name": "蘑菇", "value": 5 },
+                        { "name": "玉米粒", "value": 3 },
+                        { "name": "意大利香肠", "value": 5 },
+                        { "name": "培根", "value": 3 },
+                        { "name": "鸡肉", "value": 5 },
+                        { "name": "虾仁", "value": 5 }
+                    ]
+                }
+            ]
+        };
+
+        const width = 960;
+        const height = 600;
+
+        const color = d3.scaleOrdinal()
+            .domain(["披萨成分", "基础原料", "调味料", "配料"])
+            .range(["#FFFFFF", "#FFDAB9", "#ADD8E6", "#FFFACD"]); // 白色、浅红色、浅蓝色、淡黄色
+
+        const pack = d3.pack()
+            .size([width, height])
+            .padding(10);
+
+        const root = d3.hierarchy(data)
+            .sum(d => d.value)
+            .sort((a, b) => b.value - a.value);
+
+        pack(root);
+
+        const svg = d3.select("#chart")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .attr("viewBox", `0 0 ${width} ${height}`)
+            .attr("xmlns", "http://www.w3.org/2000/svg");
+
+        const node = svg.selectAll("g")
+            .data(root.descendants())
+            .enter()
+            .append("g")
+            .attr("transform", d => `translate(${d.x},${d.y})`);
+
+        node.append("circle")
+            .attr("r", d => d.r)
+            .attr("fill", d => color(d.depth === 0 ? "披萨成分" : d.parent ? d.parent.data.name : ""))
+            .attr("stroke", d => color(d.depth === 0 ? "披萨成分" : d.parent ? d.parent.data.name : ""));
+
+        node.append("text")
+            .attr("dy", "0.3em")
+            .selectAll("tspan")
+            .data(d => d.children ? [d.data.name] : [d.data.name, `${d.data.value}%`])
+            .enter()
+            .append("tspan")
+            .attr("x", 0)
+            .attr("dy", (d, i) => i === 0 ? "-0.5em" : "1.2em")
+            .text(d => d)
+            .style("font-size", d => (d.length > 5 ? "8px" : "10px"));
+    </script>
+</body>
+</html>
