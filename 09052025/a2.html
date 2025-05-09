@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treemap Visualization with Legend</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        .node {
+            font: 10px sans-serif;
+            overflow: hidden;
+            position: absolute;
+            text-indent: 2px;
+        }
+        .legend {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+    <h1>披萨成分面积树图</h1>
+    <div id="chart" style="position: relative; width: 960px; height: 600px;"></div>
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: #FFD700;"></div>
+            <span>基础原料 (Base)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: #FFA500;"></div>
+            <span>调味料 (Seasoning)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: #32CD32;"></div>
+            <span>配料 (Topping)</span>
+        </div>
+    </div>
+
+    <script>
+        const data = {
+            "name": "Ingredients",
+            "children": [
+                {
+                    "name": "Base",
+                    "children": [
+                        { "name": "面粉", "value": 20 },
+                        { "name": "水", "value": 10 },
+                        { "name": "酵母", "value": 1 },
+                        { "name": "盐", "value": 0.5 },
+                        { "name": "橄榄油", "value": 1 }
+                    ]
+                },
+                {
+                    "name": "Seasoning",
+                    "children": [
+                        { "name": "番茄酱", "value": 15 },
+                        { "name": "大蒜粉", "value": 1 },
+                        { "name": "洋葱粉", "value": 1 },
+                        { "name": "干牛至", "value": 0.5 },
+                        { "name": "黑胡椒碎", "value": 0.5 }
+                    ]
+                },
+                {
+                    "name": "Topping",
+                    "children": [
+                        { "name": "马苏里拉奶酪", "value": 20 },
+                        { "name": "帕玛森奶酪", "value": 5 },
+                        { "name": "洋葱", "value": 5 },
+                        { "name": "青椒", "value": 5 },
+                        { "name": "蘑菇", "value": 5 },
+                        { "name": "玉米粒", "value": 3 },
+                        { "name": "意大利香肠", "value": 5 },
+                        { "name": "培根", "value": 3 },
+                        { "name": "鸡肉", "value": 5 },
+                        { "name": "虾仁", "value": 5 }
+                    ]
+                }
+            ]
+        };
+
+        const width = 960;
+        const height = 600;
+
+        const color = d3.scaleOrdinal()
+            .domain(["Base", "Seasoning", "Topping"])
+            .range(["#FFD700", "#FFA500", "#32CD32"]); // Yellow, Orange, Green
+
+        const treemap = d3.treemap()
+            .size([width, height])
+            .padding(1)
+            .round(true);
+
+        const root = d3.hierarchy(data)
+            .sum(d => d.value)
+            .sort((a, b) => b.value - a.value);
+
+        treemap(root);
+
+        const chart = d3.select("#chart");
+
+        const nodes = chart.selectAll(".node")
+            .data(root.leaves())
+            .enter()
+            .append("div")
+            .attr("class", "node")
+            .style("left", d => `${d.x0}px`)
+            .style("top", d => `${d.y0}px`)
+            .style("width", d => `${d.x1 - d.x0}px`)
+            .style("height", d => `${d.y1 - d.y0}px`)
+            .style("background", d => color(d.parent.data.name))
+            .text(d => `${d.data.name} (${d.data.value}%)`);
+    </script>
+</body>
+</html>
