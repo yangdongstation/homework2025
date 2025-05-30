@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>中国GDP最低五省高亮展示</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    #container { display: flex; flex-direction: row; align-items: flex-start; }
+    #main { width: 900px; height: 700px; }
+    #gui {
+      margin-left: 30px;
+      padding: 20px;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      background: #fafbfc;
+      min-width: 200px;
+    }
+    #lowlist li {
+      margin: 6px 0;
+      font-size: 16px;
+      color: #c0392b;
+      font-weight: bold;
+    }
+    #lowlist .inc {
+      color: #888;
+      font-weight: normal;
+      font-size: 13px;
+      margin-left: 6px;
+    }
+    button {
+      padding: 8px 18px;
+      font-size: 16px;
+      margin-bottom: 12px;
+      background: #3498db;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:active { background: #217dbb; }
+  </style>
+</head>
+<body>
+  <h2>中国GDP最低五省高亮展示</h2>
+  <div id="container">
+    <div id="main"></div>
+    <div id="gui">
+      <button id="highlightBtn">高亮GDP最低五省</button>
+      <h4>GDP最低的五个省份：</h4>
+      <ol id="lowlist"></ol>
+    </div>
+  </div>
+  <script>
+    // GDP数据
+    const mapData = [
+      {name: '广东省', value: 141633.81, inc: 2.7},
+      {name: '江苏省', value: 137008, inc: 4.65},
+      {name: '山东省', value: 98566, inc: 4.63},
+      {name: '浙江省', value: 90100, inc: 5.23},
+      {name: '四川省', value: 64697, inc: 5.45},
+      {name: '河南省', value: 63589.99, inc: 4.89},
+      {name: '湖北省', value: 60012.97, inc: 5.67},
+      {name: '福建省', value: 57761.02, inc: 5.4},
+      {name: '上海市', value: 53926.71, inc: 4.91},
+      {name: '湖南省', value: 53230.99, inc: 5.06},
+      {name: '安徽省', value: 50625, inc: 4.97},
+      {name: '北京市', value: 49843.1, inc: 5.26},
+      {name: '河北省', value: 47526.9, inc: 4.09},
+      {name: '陕西省', value: 35538.77, inc: 4.6},
+      {name: '江西省', value: 34202.47, inc: 4.67},
+      {name: '辽宁省', value: 32612.7, inc: 3.9},
+      {name: '重庆市', value: 32193.15, inc: 5.16},
+      {name: '云南省', value: 31534.1, inc: 3.07},
+      {name: '广西壮族自治区', value: 28649.4, inc: 4.17},
+      {name: '内蒙古自治区', value: 26314.6, inc: 5.17},
+      {name: '山西省', value: 25494.69, inc: -2.14},
+      {name: '贵州省', value: 22667.12, inc: 5.36},
+      {name: '新疆维吾尔自治区', value: 20534.08, inc: 4.75},
+      {name: '天津市', value: 18024.32, inc: 4.72},
+      {name: '黑龙江省', value: 16476.9, inc: 0.04},
+      {name: '吉林省', value: 14361.22, inc: 3},
+      {name: '甘肃省', value: 13002.9, inc: 5.32},
+      {name: '海南省', value: 7935.69, inc: 4.55},
+      {name: '宁夏回族自治区', value: 5502.76, inc: 2.5},
+      {name: '青海省', value: 3950.8, inc: 2.64},
+      {name: '西藏自治区', value: 2764.94, inc: 9.16}
+    ];
+
+    // 找到GDP最低的五个省份
+    const low5 = [...mapData].sort((a,b)=>a.value-b.value).slice(0,5);
+
+    // 展示在列表
+    const lowlist = document.getElementById('lowlist');
+    low5.forEach(item => {
+      const li = document.createElement('li');
+      li.innerHTML = `${item.name} <span class="inc">GDP: ${item.value}亿元, 增速: ${item.inc}%</span>`;
+      lowlist.appendChild(li);
+    });
+
+    // 地图可视化
+    let chart;
+    fetch('https://geo.datav.aliyun.com/areas_v3/bound/geojson?code=100000_full')
+      .then(res => res.json())
+      .then(chinaGeoJSON => {
+        echarts.registerMap('china', chinaGeoJSON);
+        chart = echarts.init(document.getElementById('main'));
+        chart.setOption({
+          tooltip: {
+            trigger: 'item',
+            formatter: function(params) {
+              let d = mapData.find(i => i.name === params.name);
+              if (d) {
+                return `${params.name}<br/>GDP：${d.value}亿元<br/>增速：${d.inc}%`;
+              } else {
+                return `${params.name}<br/>暂无数据`;
+              }
+            }
+          },
+          visualMap: {
+            min: 2500,
+            max: 150000,
+            left: 'left',
+            top: 'bottom',
+            text: ['高GDP','低GDP'],
+            inRange: {
+              color: ['#e0ffff', '#006edd']
+            },
+            calculable: true
+          },
+          series: [
+            {
+              name: 'GDP',
+              type: 'map',
+              map: 'china',
+              roam: true,
+              data: mapData,
+              emphasis: {
+                label: { show: true, fontSize: 14 }
+              },
+              select: {
+                itemStyle: {
+                  areaColor: '#ff5252',
+                  borderColor: '#aa2222',
+                  borderWidth: 2
+                },
+                label: { color: '#fff', fontWeight: 'bold' }
+              }
+            }
+          ]
+        });
+      });
+
+    // 按钮交互：高亮GDP最低5省
+    document.getElementById('highlightBtn').onclick = function() {
+      if (!chart) return;
+      const names = low5.map(i=>i.name);
+      chart.dispatchAction({
+        type: 'mapSelect',
+        seriesIndex: 0,
+        name: names[0]
+      });
+      chart.dispatchAction({ // 清除其他选择
+        type: 'downplay',
+        seriesIndex: 0
+      });
+      for (let n of names) {
+        chart.dispatchAction({
+          type: 'highlight',
+          seriesIndex: 0,
+          name: n
+        });
+        chart.dispatchAction({
+          type: 'select',
+          seriesIndex: 0,
+          name: n
+        });
+      }
+      // 自动缩放到这些省份
+      setTimeout(()=>{
+        chart.dispatchAction({
+          type: 'geoRoam',
+          componentType: 'geo',
+          zoom: 1.6,
+          center: [94, 32]
+        });
+      }, 300);
+    };
+  </script>
+</body>
+</html>

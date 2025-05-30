@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>中国GDP最低五省高亮展示与分析</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f9f9fb; }
+    #outer-container {
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 4px 24px #0001;
+      max-width: 1400px;
+      padding: 38px 42px 38px 42px;
+      display: flex;
+      flex-direction: row;
+      gap: 32px;
+      align-items: flex-start;
+      min-height: 800px;
+    }
+    #main {
+      width: 900px;
+      height: 700px;
+      min-width: 300px;
+      max-width: 100vw;
+      flex-shrink: 0;
+    }
+    #sidepanel {
+      min-width: 290px;
+      max-width: 440px;
+      background: #fafbfc;
+      border-radius: 10px;
+      padding: 22px 22px 22px 22px;
+      box-shadow: 0 1px 6px #0001;
+      border: 1px solid #e4e7ef;
+    }
+    #lowlist li {
+      margin: 6px 0;
+      font-size: 16px;
+      color: #c0392b;
+      font-weight: bold;
+    }
+    #lowlist .inc {
+      color: #888;
+      font-weight: normal;
+      font-size: 13px;
+      margin-left: 6px;
+    }
+    #analysis {
+      margin-top: 24px;
+      font-size: 15px;
+      color: #222;
+      line-height: 1.7;
+    }
+    #analysis h4, #analysis h3 {
+      margin-top: 14px;
+      margin-bottom: 6px;
+      color: #007b81;
+    }
+    #analysis ul, #analysis ol {
+      margin-left: 20px;
+      margin-bottom: 10px;
+    }
+    #analysis a { color: #2980b9; }
+    @media (max-width:1200px) {
+      #outer-container { flex-direction: column; }
+      #main { width: 98vw; height: 50vw; min-height: 320px; }
+      #sidepanel { max-width: none; min-width: unset; }
+    }
+  </style>
+</head>
+<body>
+  <div id="outer-container">
+    <div id="main"></div>
+    <div id="sidepanel">
+      <h4>GDP最低的五个省份：</h4>
+      <ol id="lowlist"></ol>
+      <div id="analysis">
+        <h3>2024年中国省份GDP与增速数据分析</h3>
+        <h4>数据分析与结论</h4>
+        <ul>
+          <li>GDP最高的省份依然为广东、江苏、山东、浙江，经济总量遥遥领先。</li>
+          <li>增速最高为西藏（9.16%），贵州、湖北、甘肃等中西部省份增速较快，经济活力明显；山西为唯一负增长（-2.14%），黑龙江、宁夏、广东等低速增长。</li>
+          <li>沿海发达地区经济总量大但增速较平稳；部分中西部省份经济结构调整带来更高增速。</li>
+          <li>港澳台及南海区域在地图中有轮廓显示（若数据缺失则以灰色/无气泡表示）。</li>
+        </ul>
+        <h4>数据来源与说明</h4>
+        <ul>
+          <li>地图边界数据来自 <a href="https://geo.datav.aliyun.com/areas_v3/bound/geojson?code=100000_full" target="_blank">阿里云 GeoJSON 中国地图（含港澳台及南海）</a>。</li>
+          <li>GDP与增速数据为国家统计局权威数据。</li>
+          <li>由于各省份统计口径、时间点略有差异，部分数据可能与官方最新发布略有出入。</li>
+          <li>地图展示时，若省份在数据表中缺失则不显示气泡，区域以默认灰色显示。</li>
+        </ul>
+        <h4>数据可视化说明</h4>
+        <ul>
+          <li>省份颜色代表GDP总量（色阶由淡至深）。</li>
+          <li>气泡大小和颜色代表增速（增速越大气泡越大，红色为高增速，蓝色为负增长，橙色为中等）。</li>
+          <li>鼠标悬停显示详细数据，包括省份名称、GDP、增速。</li>
+          <li>港澳台和南海诸岛区域轮廓标准展示，避免争议和不规范地图。</li>
+        </ul>
+        <h4>数据潜在问题</h4>
+        <ul>
+          <li>省份名称需与GeoJSON保持一致，否则可能无法正确匹配显示。</li>
+          <li>部分地图服务可能对南海、港澳台展示方式有差异，建议始终使用官方权威边界数据。</li>
+          <li>若需更详细的多维数据展示（如人均GDP、产业结构等），可继续扩展气泡/色彩等维度。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <script>
+    // GDP数据
+    const mapData = [
+      {name: '广东省', value: 141633.81, inc: 2.7},
+      {name: '江苏省', value: 137008, inc: 4.65},
+      {name: '山东省', value: 98566, inc: 4.63},
+      {name: '浙江省', value: 90100, inc: 5.23},
+      {name: '四川省', value: 64697, inc: 5.45},
+      {name: '河南省', value: 63589.99, inc: 4.89},
+      {name: '湖北省', value: 60012.97, inc: 5.67},
+      {name: '福建省', value: 57761.02, inc: 5.4},
+      {name: '上海市', value: 53926.71, inc: 4.91},
+      {name: '湖南省', value: 53230.99, inc: 5.06},
+      {name: '安徽省', value: 50625, inc: 4.97},
+      {name: '北京市', value: 49843.1, inc: 5.26},
+      {name: '河北省', value: 47526.9, inc: 4.09},
+      {name: '陕西省', value: 35538.77, inc: 4.6},
+      {name: '江西省', value: 34202.47, inc: 4.67},
+      {name: '辽宁省', value: 32612.7, inc: 3.9},
+      {name: '重庆市', value: 32193.15, inc: 5.16},
+      {name: '云南省', value: 31534.1, inc: 3.07},
+      {name: '广西壮族自治区', value: 28649.4, inc: 4.17},
+      {name: '内蒙古自治区', value: 26314.6, inc: 5.17},
+      {name: '山西省', value: 25494.69, inc: -2.14},
+      {name: '贵州省', value: 22667.12, inc: 5.36},
+      {name: '新疆维吾尔自治区', value: 20534.08, inc: 4.75},
+      {name: '天津市', value: 18024.32, inc: 4.72},
+      {name: '黑龙江省', value: 16476.9, inc: 0.04},
+      {name: '吉林省', value: 14361.22, inc: 3},
+      {name: '甘肃省', value: 13002.9, inc: 5.32},
+      {name: '海南省', value: 7935.69, inc: 4.55},
+      {name: '宁夏回族自治区', value: 5502.76, inc: 2.5},
+      {name: '青海省', value: 3950.8, inc: 2.64},
+      {name: '西藏自治区', value: 2764.94, inc: 9.16}
+    ];
+
+    // 找到GDP最低的五个省份
+    const low5 = [...mapData].sort((a,b)=>a.value-b.value).slice(0,5);
+    const low5Names = low5.map(i=>i.name);
+
+    // 展示在列表
+    const lowlist = document.getElementById('lowlist');
+    low5.forEach(item => {
+      const li = document.createElement('li');
+      li.innerHTML = `${item.name} <span class="inc">GDP: ${item.value}亿元, 增速: ${item.inc}%</span>`;
+      lowlist.appendChild(li);
+    });
+
+    // 定义黄色样式
+    const YELLOW_STYLE = {
+      areaColor: '#ffe066',
+      borderColor: '#e1b800',
+      borderWidth: 2
+    };
+
+    fetch('https://geo.datav.aliyun.com/areas_v3/bound/geojson?code=100000_full')
+      .then(res => res.json())
+      .then(chinaGeoJSON => {
+        echarts.registerMap('china', chinaGeoJSON);
+        const chart = echarts.init(document.getElementById('main'));
+
+        // 构建data，最低五省单独指定黄色样式
+        const mapSeriesData = mapData.map(item => {
+          if (low5Names.includes(item.name)) {
+            return {
+              ...item,
+              itemStyle: YELLOW_STYLE,
+              emphasis: { itemStyle: YELLOW_STYLE },
+              select: { itemStyle: YELLOW_STYLE }
+            };
+          }
+          return item;
+        });
+
+        chart.setOption({
+          tooltip: {
+            trigger: 'item',
+            formatter: function(params) {
+              let d = mapData.find(i => i.name === params.name);
+              if (d) {
+                return `${params.name}<br/>GDP：${d.value}亿元<br/>增速：${d.inc}%`;
+              } else {
+                return `${params.name}<br/>暂无数据`;
+              }
+            }
+          },
+          visualMap: {
+            min: 2500,
+            max: 150000,
+            left: 'left',
+            top: 'bottom',
+            text: ['高GDP','低GDP'],
+            inRange: {
+              color: ['#e0ffff', '#006edd']
+            },
+            calculable: true
+          },
+          series: [
+            {
+              name: 'GDP',
+              type: 'map',
+              map: 'china',
+              roam: true,
+              data: mapSeriesData,
+              emphasis: {
+                label: { show: true, fontSize: 14 }
+              }
+            }
+          ]
+        });
+
+        // 保持高亮和黄色
+        for (let n of low5Names) {
+          chart.dispatchAction({
+            type: 'highlight',
+            seriesIndex: 0,
+            name: n
+          });
+          chart.dispatchAction({
+            type: 'select',
+            seriesIndex: 0,
+            name: n
+          });
+        }
+        // 自动缩放到这些省份
+        setTimeout(()=>{
+          chart.dispatchAction({
+            type: 'geoRoam',
+            componentType: 'geo',
+            zoom: 1.6,
+            center: [94, 32]
+          });
+        }, 300);
+      });
+  </script>
+</body>
+</html>

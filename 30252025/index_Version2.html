@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>中国省份GDP与增速可视化（2024年）</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+</head>
+<body>
+  <div id="main" style="width: 1000px; height: 800px;"></div>
+  <script>
+    // 省份GDP与增速数据
+    const mapData = [
+      {name: '广东省', value: 141633.81, inc: 2.7},
+      {name: '江苏省', value: 137008, inc: 4.65},
+      {name: '山东省', value: 98566, inc: 4.63},
+      {name: '浙江省', value: 90100, inc: 5.23},
+      {name: '四川省', value: 64697, inc: 5.45},
+      {name: '河南省', value: 63589.99, inc: 4.89},
+      {name: '湖北省', value: 60012.97, inc: 5.67},
+      {name: '福建省', value: 57761.02, inc: 5.4},
+      {name: '上海市', value: 53926.71, inc: 4.91},
+      {name: '湖南省', value: 53230.99, inc: 5.06},
+      {name: '安徽省', value: 50625, inc: 4.97},
+      {name: '北京市', value: 49843.1, inc: 5.26},
+      {name: '河北省', value: 47526.9, inc: 4.09},
+      {name: '陕西省', value: 35538.77, inc: 4.6},
+      {name: '江西省', value: 34202.47, inc: 4.67},
+      {name: '辽宁省', value: 32612.7, inc: 3.9},
+      {name: '重庆市', value: 32193.15, inc: 5.16},
+      {name: '云南省', value: 31534.1, inc: 3.07},
+      {name: '广西壮族自治区', value: 28649.4, inc: 4.17},
+      {name: '内蒙古自治区', value: 26314.6, inc: 5.17},
+      {name: '山西省', value: 25494.69, inc: -2.14},
+      {name: '贵州省', value: 22667.12, inc: 5.36},
+      {name: '新疆维吾尔自治区', value: 20534.08, inc: 4.75},
+      {name: '天津市', value: 18024.32, inc: 4.72},
+      {name: '黑龙江省', value: 16476.9, inc: 0.04},
+      {name: '吉林省', value: 14361.22, inc: 3},
+      {name: '甘肃省', value: 13002.9, inc: 5.32},
+      {name: '海南省', value: 7935.69, inc: 4.55},
+      {name: '宁夏回族自治区', value: 5502.76, inc: 2.5},
+      {name: '青海省', value: 3950.8, inc: 2.64},
+      {name: '西藏自治区', value: 2764.94, inc: 9.16}
+      // 港澳台数据暂无，地图会自动灰显
+    ];
+
+    // 省份气泡数据（以增速为气泡大小和颜色）
+    const scatterData = mapData.map(d => ({
+      name: d.name,
+      value: d.value,
+      inc: d.inc
+    }));
+
+    // 加载标准中国地图GeoJSON（含港澳台、南海，来源见数据说明）
+    fetch('https://geo.datav.aliyun.com/areas_v3/bound/geojson?code=100000_full')
+      .then(res => res.json())
+      .then(chinaGeoJSON => {
+        echarts.registerMap('china', chinaGeoJSON);
+        const myChart = echarts.init(document.getElementById('main'));
+        myChart.setOption({
+          title: {
+            text: '2024年中国省份GDP与增速可视化',
+            left: 'center'
+          },
+          tooltip: {
+            trigger: 'item',
+            formatter: function(params) {
+              let d = mapData.find(i => i.name === params.name);
+              if (d) {
+                return `${params.name}<br/>GDP：${d.value} 亿元<br/>增速：${d.inc}%`;
+              } else if (params.value) {
+                return `${params.name}<br/>GDP：${params.value} 亿元`;
+              } else {
+                return `${params.name}<br/>暂无数据`;
+              }
+            }
+          },
+          visualMap: {
+            min: 2500,
+            max: 150000,
+            left: 'left',
+            top: 'bottom',
+            text: ['高GDP','低GDP'],
+            inRange: {
+              color: ['#e0ffff', '#006edd']
+            },
+            calculable: true,
+            seriesIndex: 0
+          },
+          geo: {
+            map: 'china',
+            roam: true,
+            label: { show: false }
+          },
+          series: [
+            {
+              name: 'GDP',
+              type: 'map',
+              map: 'china',
+              roam: true,
+              data: mapData,
+              emphasis: {
+                label: {
+                  show: true,
+                  fontSize: 12
+                }
+              }
+            },
+            {
+              name: '增速',
+              type: 'effectScatter',
+              coordinateSystem: 'geo',
+              data: [],
+              symbolSize: function (val, params) {
+                // 以增速为气泡大小，增速越大气泡越大
+                const d = mapData.find(item => item.name === params.name);
+                return d ? Math.max(10, Math.abs(d.inc) * 2) : 0;
+              },
+              itemStyle: {
+                color: function(params) {
+                  let d = mapData.find(item => item.name === params.name);
+                  if(!d) return '#aaa';
+                  if(d.inc > 5) return '#ff3333';
+                  if(d.inc < 0) return '#3333ff';
+                  return '#ffae00';
+                },
+                opacity: 0.8
+              },
+              encode: { tooltip: [2] },
+              data: []
+            }
+          ]
+        });
+
+        // 计算省份中心点（用于气泡定位）
+        // 将geoJSON省份名称与数据名称匹配，取中心点
+        let features = chinaGeoJSON.features;
+        let bubbleData = mapData.map(d => {
+          let f = features.find(f => f.properties.name === d.name);
+          if (f && f.properties && f.properties.center) {
+            return {
+              name: d.name,
+              value: f.properties.center.concat([d.inc]),
+              inc: d.inc
+            };
+          } else if (f && f.properties && f.properties.centroid) { // 兼容可能的中心点字段
+            return {
+              name: d.name,
+              value: f.properties.centroid.concat([d.inc]),
+              inc: d.inc
+            };
+          } else {
+            // 若无中心点，取第一个坐标点
+            let coords = f && f.geometry && f.geometry.coordinates && f.geometry.coordinates[0][0];
+            if (coords && coords.length>=2) {
+              return {
+                name: d.name,
+                value: coords.concat([d.inc]),
+                inc: d.inc
+              };
+            }
+          }
+          return null;
+        }).filter(Boolean);
+
+        // 设置气泡数据
+        myChart.setOption({
+          series: [
+            {},
+            {
+              data: bubbleData
+            }
+          ]
+        });
+      });
+  </script>
+</body>
+</html>

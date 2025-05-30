@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>世界人口分布可视化</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <style>
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+        }
+        .chart-box {
+            flex: 1 1 300px;
+            min-width: 320px;
+            max-width: 600px;
+            height: 400px;
+        }
+        .desc {
+            margin-top: 30px;
+            font-size: 1.1em;
+            color: #333;
+            background: #f7f8fa;
+            padding: 16px;
+            border-radius: 8px;
+            max-width: 1200px;
+        }
+        h2 {
+            font-size: 1.25em;
+            color: #2a4e77;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>世界人口分布可视化</h1>
+    <div class="container">
+        <div id="treemap" class="chart-box"></div>
+        <div id="bubble" class="chart-box"></div>
+        <div id="sunburst" class="chart-box"></div>
+    </div>
+    <div class="desc">
+        <h2>数据简析</h2>
+        世界人口呈现高度不均分布。亚洲人口最多，尤其中国和印度，分别超14亿。非洲以尼日利亚为代表，人口迅速增长。美洲以美国、巴西为主，欧洲则相对均衡但总量较低。可视化展现出亚洲在人口分布中的主导地位，各大洲内部差异显著。
+    </div>
+    <script>
+        // 数据
+        var populationData = [
+            {continent: '亚洲', country: '中国', value: 1410},
+            {continent: '亚洲', country: '印度', value: 1390},
+            {continent: '亚洲', country: '日本', value: 126},
+            {continent: '欧洲', country: '俄罗斯', value: 146},
+            {continent: '欧洲', country: '德国', value: 83},
+            {continent: '欧洲', country: '英国', value: 68},
+            {continent: '非洲', country: '尼日利亚', value: 206},
+            {continent: '非洲', country: '埃及', value: 104},
+            {continent: '非洲', country: '南非', value: 59},
+            {continent: '美洲', country: '美国', value: 332},
+            {continent: '美洲', country: '巴西', value: 213},
+            {continent: '美洲', country: '墨西哥', value: 129},
+        ];
+
+        // 1. 矩形树图 Treemap
+        var treemapData = [];
+        var continentMap = {};
+        populationData.forEach(item => {
+            if(!continentMap[item.continent]){
+                continentMap[item.continent] = {name: item.continent, children: []};
+                treemapData.push(continentMap[item.continent]);
+            }
+            continentMap[item.continent].children.push({name: item.country, value: item.value});
+        });
+
+        var treemap = echarts.init(document.getElementById('treemap'));
+        treemap.setOption({
+            title: {text: '矩形树图：世界人口分布', left: 'center'},
+            tooltip: {formatter: p => `${p.name}<br/>人口：${p.value}百万`},
+            series: [{
+                type: 'treemap',
+                data: treemapData,
+                label: {show: true, formatter: '{b}'}
+            }]
+        });
+
+        // 2. 泡泡图 Bubble Chart
+        // x轴为洲，y轴为人口，气泡大小为人口
+        function getContinentX(continent) {
+            return ['亚洲','欧洲','非洲','美洲'].indexOf(continent);
+        }
+        var bubbleSeries = populationData.map(item => ({
+            continent: item.continent,
+            name: item.country,
+            value: [getContinentX(item.continent), item.value, item.value]
+        }));
+
+        var bubble = echarts.init(document.getElementById('bubble'));
+        bubble.setOption({
+            title: {text: '泡泡图：主要国家人口', left: 'center'},
+            tooltip: {
+                formatter: p => `${p.data.name}<br/>洲：${p.data.continent}<br/>人口：${p.data.value[1]}百万`
+            },
+            xAxis: {
+                type: 'category',
+                data: ['亚洲','欧洲','非洲','美洲'],
+                name: '洲'
+            },
+            yAxis: {
+                type: 'value',
+                name: '人口（百万）'
+            },
+            series: [{
+                type: 'scatter',
+                data: bubbleSeries,
+                symbolSize: function (data) { return Math.sqrt(data[2]) * 4; },
+                emphasis: {focus: 'series'},
+                itemStyle: {
+                    opacity: 0.7
+                }
+            }]
+        });
+
+        // 3. 太阳图 Sunburst
+        var sunburstData = [];
+        var continentMap2 = {};
+        populationData.forEach(item => {
+            if(!continentMap2[item.continent]){
+                continentMap2[item.continent] = {name: item.continent, children: []};
+                sunburstData.push(continentMap2[item.continent]);
+            }
+            continentMap2[item.continent].children.push({name: item.country, value: item.value});
+        });
+
+        var sunburst = echarts.init(document.getElementById('sunburst'));
+        sunburst.setOption({
+            title: {text: '太阳图：世界人口分布', left: 'center'},
+            tooltip: {formatter: p => `${p.name}<br/>人口：${p.value||''}百万`},
+            series: [{
+                type: 'sunburst',
+                data: sunburstData,
+                radius: [0, '90%'],
+                label: {rotate: 'radial'}
+            }]
+        });
+    </script>
+</body>
+</html>
