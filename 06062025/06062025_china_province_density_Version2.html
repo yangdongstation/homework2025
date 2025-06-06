@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>中国省级人口与GDP密度图</title>
+  <script src="https://cdn.plot.ly/plotly-2.20.0.min.js"></script>
+</head>
+<body>
+  <h2>中国各省多维数据密度图</h2>
+  <label>上传CSV数据: <input type="file" id="csvFile"></label>
+  <br>
+  <label>横轴:
+    <select id="xAxis"></select>
+  </label>
+  <label>纵轴:
+    <select id="yAxis"></select>
+  </label>
+  <div id="densityPlot" style="width:900px;height:700px;"></div>
+  <script>
+    // 解析csv为对象数组
+    function parseCSV(str) {
+      const rows = str.trim().split('\n');
+      const header = rows[0].split(',');
+      return rows.slice(1).map(row => {
+        const vals = row.split(',');
+        const obj = {};
+        for (let i = 0; i < header.length; i++) {
+          obj[header[i]] = isNaN(parseFloat(vals[i])) ? vals[i] : parseFloat(vals[i]);
+        }
+        return obj;
+      });
+    }
+
+    function fillSelectors(keys) {
+      const xSel = document.getElementById('xAxis');
+      const ySel = document.getElementById('yAxis');
+      xSel.innerHTML = ySel.innerHTML = "";
+      keys.forEach(k => {
+        let optX = document.createElement('option');
+        optX.value = k; optX.text = k;
+        xSel.appendChild(optX);
+        let optY = document.createElement('option');
+        optY.value = k; optY.text = k;
+        ySel.appendChild(optY);
+      });
+      xSel.value = keys[0];
+      ySel.value = keys[1] || keys[0];
+    }
+
+    function plot(data, xKey, yKey, labelKey) {
+      const x = data.map(d=>d[xKey]);
+      const y = data.map(d=>d[yKey]);
+      const labels = data.map(d=>d[labelKey]);
+      Plotly.newPlot('densityPlot', [
+        {
+          x, y,
+          type: 'histogram2dcontour',
+          colorscale: 'Hot',
+          contours: {coloring:'heatmap'},
+          ncontours: 15,
+          showscale: true
+        },
+        {
+          x, y,
+          mode: 'markers+text',
+          type: 'scatter',
+          marker: {color:'rgba(0,0,255,0.4)', size:12, line:{color:'#222',width:1}},
+          text: labels,
+          textposition: "top center",
+          showlegend: false,
+          hovertemplate: `${labelKey}: %{text}<br>${xKey}: %{x}<br>${yKey}: %{y}<extra></extra>`
+        }
+      ], {
+        title: `${xKey} vs. ${yKey} 二维密度分布图`,
+        xaxis: {title: xKey},
+        yaxis: {title: yKey}
+      }, {responsive: true});
+    }
+
+    let currentData = [];
+    let numericKeys = [];
+    let labelKey = "";
+
+    function updatePlot() {
+      const xSel = document.getElementById('xAxis');
+      const ySel = document.getElementById('yAxis');
+      if(xSel.value === ySel.value) return;
+      plot(currentData, xSel.value, ySel.value, labelKey);
+    }
+
+    document.getElementById('csvFile').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        currentData = parseCSV(e.target.result);
+        // 自动找出所有数值型和一个非数值型字段（如省份名）
+        let sample = currentData[0];
+        numericKeys = Object.keys(sample).filter(k => typeof sample[k]==='number');
+        labelKey = Object.keys(sample).find(k => typeof sample[k]!=='number');
+        fillSelectors(numericKeys);
+        updatePlot();
+      };
+      reader.readAsText(file, 'utf-8');
+    });
+
+    document.getElementById('xAxis').onchange = document.getElementById('yAxis').onchange = updatePlot;
+  </script>
+  <p>CSV示例格式：省份,人口,面积,GDP<br>
+  （单位可自定）</p>
+</body>
+</html>
