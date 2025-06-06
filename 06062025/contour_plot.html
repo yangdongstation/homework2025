@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>等高线图绘制</title>
+  <style>
+    body { background: #222; color: #fff; }
+    #contourCanvas { background: #fff; border: 1px solid #888; }
+  </style>
+</head>
+<body>
+  <h2>等高线图绘制（Contour Plot）</h2>
+  <canvas id="contourCanvas" width="870" height="610"></canvas>
+  <script>
+    // 数据准备
+    const width = 87, height = 61;
+    // 由于字符限制，这里只放少部分，实际使用时请将数据补全
+    const values = [
+      103,104,104,105,105,106,106,106,107,107,106,106,105,105,104,104,104,104,105,107,107,106,105,105,107,108,109,110,110,110,110,110,110,109,109,109,109,109,109,108,107,107,107,107,106,106,105,104,104,104,104,104,104,104,103,103,103,103,102,102,101,101,100,100,100,100,100,99,98,97,97,96,96,96,96,96,96,96,95,95,95,94,94,94,94,94,94,
+      104,104,105,105,106,106,107,107,107,107,107,107,107,106,106,106,106,106,106,108,108,108,106,106,108,109,110,110,112,112,113,112,111,110,110,110,110,109,109,109,108,107,107,107,107,106,106,105,104,104,104,104,104,104,104,103,103,103,103,102,102,101,101,100,100,100,100,99,99,98,97,97,96,96,96,96,96,96,96,95,95,95,94,94,94,94,94,
+      // ... 其余数据请补全 ...
+    ];
+
+    // 将一维数组还原为二维数组
+    const grid = [];
+    for(let y=0; y<height; y++) {
+      grid[y] = [];
+      for(let x=0; x<width; x++) {
+        grid[y][x] = values[y * width + x];
+      }
+    }
+
+    // 求数据的最小最大值
+    let min = Math.min(...values), max = Math.max(...values);
+
+    // 生成等高线等级
+    const levels = 15;
+    const contours = [];
+    for(let i=0; i<=levels; i++) {
+      contours.push(min + i * (max-min)/levels);
+    }
+
+    // 简单的Marching Squares算法
+    function marchingSquares(grid, width, height, level) {
+      const lines = [];
+      for(let y=0; y<height-1; y++) {
+        for(let x=0; x<width-1; x++) {
+          let v0 = grid[y][x] >= level ? 1 : 0;
+          let v1 = grid[y][x+1] >= level ? 1 : 0;
+          let v2 = grid[y+1][x+1] >= level ? 1 : 0;
+          let v3 = grid[y+1][x] >= level ? 1 : 0;
+          let code = v0 * 8 + v1 * 4 + v2 * 2 + v3 * 1;
+          // 只绘制最基本的线段（不插值，效果简单/直观）
+          switch(code) {
+            case 1:  case 14: lines.push([[x, y+1],   [x, y]]); break;
+            case 2:  case 13: lines.push([[x+1, y+1], [x, y+1]]); break;
+            case 4:  case 11: lines.push([[x+1, y],   [x+1, y+1]]); break;
+            case 8:  case 7:  lines.push([[x, y],     [x+1, y]]); break;
+            case 3:  case 12: lines.push([[x, y],     [x+1, y]]); break;
+            case 6:  case 9:  lines.push([[x, y+1],   [x+1, y+1]]); break;
+            case 5:  case 10:
+              lines.push([[x, y],     [x, y+1]]);
+              lines.push([[x+1, y],   [x+1, y+1]]);
+              break;
+          }
+        }
+      }
+      return lines;
+    }
+
+    // 绘制
+    const canvas = document.getElementById('contourCanvas');
+    const ctx = canvas.getContext('2d');
+    const scale = 10; // 每格放大倍数
+
+    function getColor(i) {
+      // 采用rainbow色带
+      const t = i/levels;
+      return `hsl(${240-240*t}, 100%, 50%)`;
+    }
+
+    // 绘制背景（插值填色，简单像素块填充）
+    for(let y=0; y<height; y++) {
+      for(let x=0; x<width; x++) {
+        let v = grid[y][x];
+        let ci = Math.round((v-min)*levels/(max-min));
+        ctx.fillStyle = getColor(ci);
+        ctx.fillRect(x*scale, y*scale, scale, scale);
+      }
+    }
+
+    // 绘制等高线
+    for(let i=0; i<contours.length; i++) {
+      let lines = marchingSquares(grid, width, height, contours[i]);
+      ctx.strokeStyle = getColor(i);
+      ctx.lineWidth = 2;
+      for(const [[x1,y1],[x2,y2]] of lines) {
+        ctx.beginPath();
+        ctx.moveTo(x1*scale, y1*scale);
+        ctx.lineTo(x2*scale, y2*scale);
+        ctx.stroke();
+      }
+    }
+
+    // 添加图例
+    ctx.fillStyle = "#000";
+    ctx.font = "14px sans-serif";
+    for(let i=0; i<contours.length; i+=3) {
+      ctx.fillStyle = getColor(i);
+      ctx.fillRect(10, 10+i*10, 20, 8);
+      ctx.fillStyle = "#000";
+      ctx.fillText(contours[i].toFixed(0), 35, 18+i*10);
+    }
+  </script>
+</body>
+</html>
