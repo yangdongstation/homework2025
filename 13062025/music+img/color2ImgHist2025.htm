@@ -1,0 +1,259 @@
+<html>  
+<head>  
+    <meta charset="utf-8">  
+    <title>基于Kmeans聚类的图片色彩提取</title>  
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        #colorBars {
+            margin-top: 20px;
+        }
+    </style>
+</head> 
+<body>
+    <div class="container">
+        <center>
+            <h1>基于Kmeans聚类的图片色彩提取</h1>
+            <script src="https://www.lactame.com/lib/ml/4.0.0/ml.min.js" charset="utf-8"></script> 
+            <script src="../d3.v7.min.js" charset="utf-8"></script>
+            <hr width=80%></hr>
+
+            <h2>图像主色提取与可视化</h2>
+            <button id="extract">提取色彩</button><br>
+
+            <canvas id="myCanvas" width="1024" height="768"></canvas>
+            
+            <div id="colorBars"></div>
+        </center>
+    </div>
+
+    <script type="text/javascript">
+        // 初始化画布尺寸
+        var width = Math.min(1024, (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) * 0.98);
+        var height = Math.min(768, (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) * 0.6);
+
+        var mycanvas = document.getElementById("myCanvas");
+        mycanvas.setAttribute("width", width);
+        mycanvas.setAttribute("height", height);
+
+        // 加载并绘制原始图像
+        var c = document.getElementById("myCanvas");
+        var cxt = c.getContext("2d");
+        var img = new Image();
+        img.crossOrigin = "Anonymous"; // 处理跨域问题
+        img.onload = function() {
+            // 保持图像比例
+            var ratio = Math.min(width / img.width, height / img.height);
+            var drawWidth = img.width * ratio;
+            var drawHeight = img.height * ratio;
+            
+            cxt.drawImage(img, 0, 0, img.width, img.height, 0, 0, drawWidth, drawHeight);
+            processImage(drawWidth, drawHeight);
+        };
+        img.onerror = function() {
+            console.error("图片加载失败");
+            // 使用默认图像或显示错误信息
+            cxt.fillStyle = "#f0f0f0";
+            cxt.fillRect(0, 0, width, height);
+            cxt.fillStyle = "#000";
+            cxt.textAlign = "center";
+            cxt.fillText("图片加载失败，请检查图片路径", width/2, height/2);
+        };
+        img.src = "wangjw-480.jpg";
+
+        function processImage(imgWidth, imgHeight) {
+            try {
+                var imageData = cxt.getImageData(0, 0, imgWidth, imgHeight);
+                var idata = imageData.data;
+                
+                // 准备数据矩阵 - 确保只包含有效像素
+                var datargb = [];
+                for(var i = 0; i < imgHeight; i++) {
+                    for(var j = 0; j < imgWidth; j++) {
+                        var index = (i * imgWidth + j) * 4;
+                        // 确保不是完全透明的像素
+                        if(idata[index + 3] > 0) {
+                            datargb.push([
+                                idata[index],     // R
+                                idata[index + 1], // G
+                                idata[index + 2]  // B
+                            ]);
+                        }
+                    }
+                }
+
+                // 检查是否有足够的数据点
+                if(datargb.length < 7) {
+                    console.error("有效像素不足，无法进行7类聚类");
+                    return;
+                }
+
+                // 改进的初始化聚类中心 - 确保获取有效值
+                var cent = [];
+                var usedIndices = {};
+                for(var i = 0; i < 7; i++) {
+                    var randomIndex;
+                    do {
+                        randomIndex = Math.floor(Math.random() * datargb.length);
+                    } while(usedIndices[randomIndex] && Object.keys(usedIndices).length < datargb.length);
+                    
+                    if(!usedIndices[randomIndex]) {
+                        cent.push(datargb[randomIndex]);
+                        usedIndices[randomIndex] = true;
+                    } else {
+                        // 如果无法找到足够的不同点，减少聚类数量
+                        break;
+                    }
+                }
+
+                // 执行K-means聚类 - 添加错误处理
+                var cc7;
+                try {
+                    cc7 = ML.KMeans(datargb, cent.length, { initialization: cent });
+                    if(!cc7 || !cc7.centroids) {
+                        throw new Error("聚类结果无效");
+                    }
+                } catch(e) {
+                    console.error("K-means聚类失败:", e);
+                    return;
+                }
+                
+                // 显示色彩提取结果
+                function showColorExtraction() {
+                    // 重置画布
+                    cxt.clearRect(0, 0, imgWidth, imgHeight);
+                    
+                    // 用聚类中心填充图像
+                    for(var i = 0; i < imgHeight; i++) {
+                        for(var j = 0; j < imgWidth; j++) {
+                            var pixelIndex = i * imgWidth + j;
+                            var dataIndex = pixelIndex * 4;
+                            
+                            var originalIndex = Math.floor(pixelIndex * (datargb.length / (imgWidth * imgHeight)));
+                            originalIndex = Math.min(originalIndex, datargb.length - 1);
+                            
+                            var clusterIndex = cc7.clusters[originalIndex];
+                            if(clusterIndex === undefined || !cc7.centroids[clusterIndex]) {
+                                continue;
+                            }
+                            
+                            var centroid = cc7.centroids[clusterIndex].centroid;
+                            idata[dataIndex] = Math.floor(centroid[0]);     // R
+                            idata[dataIndex + 1] = Math.floor(centroid[1]); // G
+                            idata[dataIndex + 2] = Math.floor(centroid[2]); // B
+                            idata[dataIndex + 3] = 255;                     // Alpha
+                        }
+                    }
+                    cxt.putImageData(imageData, 0, 0);
+                    
+                    // 创建色彩直方图
+                    createColorHistogram(cc7, datargb.length);
+                }
+                
+                // 为按钮添加事件监听
+                document.getElementById('extract').addEventListener('click', showColorExtraction);
+                
+                // 自动执行一次色彩提取
+                showColorExtraction();
+            } catch(e) {
+                console.error("图像处理错误:", e);
+            }
+        }
+
+        function createColorHistogram(kmeansResult, totalPixels) {
+            // 清除之前的直方图
+            d3.select("#colorBars").html("");
+            
+            // 计算每个聚类的像素数量
+            var clusterCounts = new Array(kmeansResult.centroids.length).fill(0);
+            for(var i = 0; i < kmeansResult.clusters.length; i++) {
+                var clusterIndex = kmeansResult.clusters[i];
+                if(clusterIndex !== undefined) {
+                    clusterCounts[clusterIndex]++;
+                }
+            }
+            
+            // 设置直方图尺寸
+            var histWidth = Math.min(800, width);
+            var histHeight = 200;
+            var barWidth = histWidth / kmeansResult.centroids.length;
+            
+            // 创建SVG容器
+            var svg = d3.select("#colorBars")
+                .append("svg")
+                .attr("width", histWidth)
+                .attr("height", histHeight + 50);
+            
+            // 找出最大数量用于缩放
+            var maxCount = Math.max(...clusterCounts);
+            var scaleFactor = maxCount > 0 ? (histHeight - 30) / maxCount : 1;
+            
+            // 创建颜色条
+            var bars = svg.selectAll(".colorBar")
+                .data(kmeansResult.centroids)
+                .enter()
+                .append("g")
+                .attr("class", "colorBar")
+                .attr("transform", (d, i) => `translate(${i * barWidth}, 0)`);
+            
+            // 添加颜色矩形
+            bars.append("rect")
+                .attr("x", 5)
+                .attr("y", (d, i) => histHeight - (clusterCounts[i] || 0) * scaleFactor)
+                .attr("width", barWidth - 10)
+                .attr("height", (d, i) => (clusterCounts[i] || 0) * scaleFactor)
+                .attr("fill", (d, i) => {
+                    if(!d || !d.centroid) return "#ccc";
+                    var r = Math.floor(d.centroid[0]);
+                    var g = Math.floor(d.centroid[1]);
+                    var b = Math.floor(d.centroid[2]);
+                    return `rgb(${r},${g},${b})`;
+                });
+            
+            // 添加数量标签
+            bars.append("text")
+                .attr("x", barWidth / 2)
+                .attr("y", (d, i) => histHeight - (clusterCounts[i] || 0) * scaleFactor - 5)
+                .attr("text-anchor", "middle")
+                .text((d, i) => clusterCounts[i] || 0)
+                .attr("fill", "black")
+                .attr("font-size", "12px");
+            
+            // 添加RGB值标签
+            bars.append("text")
+                .attr("x", barWidth / 2)
+                .attr("y", histHeight + 20)
+                .attr("text-anchor", "middle")
+                .text((d) => {
+                    if(!d || !d.centroid) return "N/A";
+                    var r = Math.floor(d.centroid[0]);
+                    var g = Math.floor(d.centroid[1]);
+                    var b = Math.floor(d.centroid[2]);
+                    return `${r}, ${g}, ${b}`;
+                })
+                .attr("fill", "black")
+                .attr("font-size", "12px");
+            
+            // 添加百分比标签
+            bars.append("text")
+                .attr("x", barWidth / 2)
+                .attr("y", histHeight + 40)
+                .attr("text-anchor", "middle")
+                .text((d, i) => {
+                    var count = clusterCounts[i] || 0;
+                    var percent = totalPixels > 0 ? (count / totalPixels * 100).toFixed(1) : 0;
+                    return `${percent}%`;
+                })
+                .attr("fill", "black")
+                .attr("font-size", "12px");
+        }
+    </script>
+</body>
+</html>

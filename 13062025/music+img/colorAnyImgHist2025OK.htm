@@ -1,0 +1,465 @@
+<html>  
+<head>  
+    <meta charset="utf-8">  
+    <title>基于Kmeans聚类的图片色彩提取</title>  
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 5px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .input-group {
+            margin: 20px 0;
+            text-align: center;
+        }
+        #imageUrl {
+            width: 400px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .canvas-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .canvas-wrapper {
+            position: relative;
+            border: 1px solid #ddd;
+            background-color: #f0f0f0;
+            margin: 0 10px;
+        }
+        .canvas-label {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0,0,0,0.6);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        #originalCanvas, #processedCanvas {
+            display: block;
+        }
+        #colorBars {
+            margin-top: 30px;
+            min-height: 250px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+    </style>
+</head> 
+<body>
+    <div class="container">
+        <center>
+            <h1>基于Kmeans聚类的图片色彩提取</h1>
+            <script src="https://www.lactame.com/lib/ml/4.0.0/ml.min.js" charset="utf-8"></script> 
+            <script src="https://d3js.org/d3.v7.min.js"></script>
+            <hr width=80% style="border: 0.5px solid #eee;"></hr>
+
+            <div class="input-group">
+                <input type="text" id="imageUrl" placeholder="请输入网络图片URL (例如: https://example.com/image.jpg)">
+                <button id="loadImage">加载图片</button>
+                <button id="extract" disabled>提取色彩</button><br>
+            </div>
+           
+            <div class="canvas-container">
+                <div class="canvas-wrapper">
+                    <div class="canvas-label">原始图片</div>
+                    <canvas id="originalCanvas" width="512" height="200"></canvas>
+                </div>
+                <div class="canvas-wrapper">
+                    <div class="canvas-label">色彩提取结果</div>
+                    <canvas id="processedCanvas" width="512" height="200"></canvas>
+                </div>
+            </div>
+            
+            <div id="colorBars"></div>
+        </center>
+    </div>
+
+    <script type="text/javascript">
+        // 全局变量
+        var img = new Image();
+        img.crossOrigin = "Anonymous"; // 处理跨域问题
+        var originalCanvas = document.getElementById("originalCanvas");
+        var originalCtx = originalCanvas.getContext("2d");
+        var processedCanvas = document.getElementById("processedCanvas");
+        var processedCtx = processedCanvas.getContext("2d");
+        var kmeansResult = null;
+        var pixelData = null;
+
+        // 初始化画布尺寸
+        function updateCanvasSize() {
+            var containerWidth = Math.min(1024, window.innerWidth * 0.95);
+            var canvasWidth = Math.floor((containerWidth - 40) / 2); // 减去边距
+            var canvasHeight = Math.min(200, window.innerHeight * 0.6);
+            
+            originalCanvas.setAttribute("width", canvasWidth);
+            originalCanvas.setAttribute("height", canvasHeight);
+            processedCanvas.setAttribute("width", canvasWidth);
+            processedCanvas.setAttribute("height", canvasHeight);
+            
+            return {canvasWidth, canvasHeight};
+        }
+
+        // 图片加载处理
+        function loadImage(url) {
+            document.getElementById('extract').disabled = true;
+            
+            // 显示加载状态
+            originalCtx.clearRect(0, 0, originalCanvas.width, originalCanvas.height);
+            originalCtx.fillStyle = "#f0f0f0";
+            originalCtx.fillRect(0, 0, originalCanvas.width, originalCanvas.height);
+            originalCtx.fillStyle = "#333";
+            originalCtx.textAlign = "center";
+            originalCtx.font = "16px Arial";
+            originalCtx.fillText("图片加载中...", originalCanvas.width/2, originalCanvas.height/2);
+            
+            processedCtx.clearRect(0, 0, processedCanvas.width, processedCanvas.height);
+            processedCtx.fillStyle = "#f0f0f0";
+            processedCtx.fillRect(0, 0, processedCanvas.width, processedCanvas.height);
+            
+            img.onload = function() {
+                var {canvasWidth, canvasHeight} = updateCanvasSize();
+                // 保持图像比例
+                var ratio = Math.min(canvasWidth / img.width, canvasHeight / img.height);
+                var drawWidth = Math.floor(img.width * ratio);
+                var drawHeight =  Math.floor(img.height * ratio);
+                
+                originalCtx.clearRect(0, 0, canvasWidth, canvasHeight);
+                originalCtx.drawImage(img, 0, 0, img.width, img.height, 0, 0, drawWidth, drawHeight);
+                
+                // 处理图像数据
+                processImage(drawWidth, drawHeight);
+                
+                document.getElementById('extract').disabled = false;
+                document.getElementById('extract').click();
+            };
+
+            img.onerror = function() {
+                console.error("图片加载失败");
+                var {canvasWidth, canvasHeight} = updateCanvasSize();
+                originalCtx.clearRect(0, 0, canvasWidth, canvasHeight);
+                originalCtx.fillStyle = "#f0f0f0";
+                originalCtx.fillRect(0, 0, canvasWidth, canvasHeight);
+                originalCtx.fillStyle = "#ff0000";
+                originalCtx.textAlign = "center";
+                originalCtx.font = "16px Arial";
+                originalCtx.fillText("图片加载失败，请检查URL是否正确或服务器是否支持跨域访问", canvasWidth/2, canvasHeight/2);
+                document.getElementById('extract').disabled = true;
+            };
+
+            img.src = url;
+        }
+
+        // 处理图像数据
+        var idata;
+        function processImage(imgWidth, imgHeight) {
+            try {
+                var imageData = originalCtx.getImageData(0, 0, imgWidth, imgHeight);
+                var idata = imageData.data;
+                console.log(imgWidth);
+                console.log(imgHeight);
+                
+                // 准备RGB数据
+                var datargb = [];
+                for(var i = 0; i < imgHeight; i++) {
+                    for(var j = 0; j < imgWidth; j++) {
+                        var index = (i * imgWidth + j) * 4;
+                        if(idata[index + 3] > 0) { // 过滤透明像素
+                            datargb.push([
+                                idata[index],     // R
+                                idata[index + 1], // G
+                                idata[index + 2]  // B
+                            ]);
+                        }
+                    }
+                }
+
+                if(datargb.length < 7) {
+                    alert("有效像素不足，至少需要7个非透明像素");
+                    return;
+                }
+
+                // 改进的聚类中心初始化
+                var cent = [];
+                var usedIndices = {};
+                for(var i = 0; i < 7; i++) {
+                    let randomIndex;
+                    do {
+                        randomIndex = Math.floor(Math.random() * datargb.length);
+                    } while(usedIndices[randomIndex] && Object.keys(usedIndices).length < datargb.length);
+                    
+                    if(!usedIndices[randomIndex]) {
+                        cent.push(datargb[randomIndex]);
+                        usedIndices[randomIndex] = true;
+                    }
+                }
+
+                // 执行K-means聚类
+                var cc7;
+                try {
+                    cc7 = ML.KMeans(datargb, cent.length, { initialization: cent });
+                    if(!cc7.centroids || cc7.centroids.length === 0) throw new Error("聚类结果为空");
+                } catch(e) {
+                    console.error("聚类失败:", e);
+                    alert("色彩提取失败，请尝试其他图片");
+                    return;
+                }
+
+                // 保存聚类结果供后续使用
+                kmeansResult = cc7;
+                pixelData = {idata, imgWidth, imgHeight, datargb};
+                
+                // 显示初始提示
+                showInitialMessage();
+                
+                // 绑定提取按钮事件
+                document.getElementById('extract').addEventListener('click', function() {
+                    updateCanvasWithClusters();
+                });
+            } catch(e) {
+                console.error("图像处理错误:", e);
+                alert("处理图片时发生错误，请尝试其他图片");
+            }
+        }
+
+        // 显示初始提示
+        function showInitialMessage() {
+            processedCtx.fillStyle = "rgba(0,0,0,0.6)";
+            processedCtx.fillRect(processedCanvas.width, processedCanvas.height, processedCanvas.width, 50);
+            processedCtx.fillStyle = "white";
+            processedCtx.textAlign = "center";
+            processedCtx.font = "18px Arial";
+            processedCtx.fillText("点击'提取色彩'按钮开始分析", processedCanvas.width/2, processedCanvas.height/2 + 6);
+        }
+
+        
+        // 显示聚类结果
+        
+        function updateCanvasWithClusters() {
+                      
+            var {idata, imgWidth, imgHeight, datargb} = pixelData;
+        
+            // 直接修改原始图像数据
+            for(var i = 0; i < datargb.length; i++) {
+                var clusterIndex = kmeansResult.clusters[i];
+                var centroid = kmeansResult.centroids[clusterIndex].centroid;
+                
+                // 更新原始数据中的颜色为聚类中心颜色
+                datargb[i][0] = Math.floor(centroid[0]);
+                datargb[i][1] = Math.floor(centroid[1]);
+                datargb[i][2] = Math.floor(centroid[2]);
+            }
+            
+            // 重新绘制处理后的图像
+            var index = 0;
+            for(var i = 0; i < imgHeight; i++) {
+                for(var j = 0; j < imgWidth; j++) {
+                    var rgbaIndex = (i * imgWidth + j) * 4;
+                    if(idata[rgbaIndex + 3] > 0) { // 非透明像素
+                        idata[rgbaIndex] = datargb[index][0];
+                        idata[rgbaIndex + 1] = datargb[index][1];
+                        idata[rgbaIndex + 2] = datargb[index][2];
+                        index++;
+                    }
+                }
+            }
+        
+            // 显示处理后的图片
+            processedCtx.putImageData(new ImageData(idata, imgWidth, imgHeight), 0, 0);
+            
+            // 创建颜色直方图
+            console.log(kmeansResult)
+            console.log(datargb)
+            createColorHistogram(kmeansResult, datargb.length);
+        }
+        // 创建颜色直方图
+        function createColorHistogram(kmeansResult, totalPixels) {
+            d3.select("#colorBars").html("");
+            
+            var clusterCounts = kmeansResult.clusters.reduce((acc, curr) => {
+                acc[curr] = (acc[curr] || 0) + 1;
+                return acc;
+            }, {});
+
+            var centroids = kmeansResult.centroids.map(cent => cent.centroid);
+            var maxCount = Math.max(...Object.values(clusterCounts));
+            var histWidth = Math.min(800, originalCanvas.width * 2);
+            var histHeight = 200;
+            var barWidth = histWidth / centroids.length;
+            var scaleFactor = maxCount > 0 ? (histHeight - 50) / maxCount : 1;
+
+            var svg = d3.select("#colorBars")
+                .append("svg")
+                .attr("width", histWidth)
+                .attr("height", histHeight + 70);
+
+            var bars = svg.selectAll(".colorBar")
+                .data(centroids.entries())
+                .enter()
+                .append("g")
+                .attr("class", "colorBar")
+                .attr("transform", (d, i) => `translate(${i * barWidth}, 0)`);
+
+            // 添加颜色矩形
+            bars.append("rect")
+                .attr("x", 5)
+                .attr("y", (d) => histHeight - (clusterCounts[d[0]] || 0) * scaleFactor)
+                .attr("width", barWidth - 10)
+                .attr("height", (d) => (clusterCounts[d[0]] || 0) * scaleFactor)
+                .attr("fill", (d) => `rgb(${d[1][0]},${d[1][1]},${d[1][2]})`)
+                .attr("stroke", "#ddd")
+                .attr("stroke-width", 1);
+
+            // 添加数量标签
+            bars.append("text")
+                .attr("x", barWidth / 2)
+                .attr("y", (d) => histHeight - (clusterCounts[d[0]] || 0) * scaleFactor - 5)
+                .attr("text-anchor", "middle")
+                .text((d) => clusterCounts[d[0]] || 0)
+                .attr("fill", "black")
+                .attr("font-size", "12px");
+
+            // 添加RGB值标签
+            bars.append("text")
+                .attr("x", barWidth / 2)
+                .attr("y", histHeight + 20)
+                .attr("text-anchor", "middle")
+                .text((d) => `${Math.floor(d[1][0])}, ${Math.floor(d[1][1])}, ${Math.floor(d[1][2])}`)
+                .attr("fill", "black")
+                .attr("font-size", "12px");
+
+            // 添加百分比标签
+            bars.append("text")
+                .attr("x", barWidth / 2)
+                .attr("y", histHeight + 40)
+                .attr("text-anchor", "middle")
+                .text((d) => {
+                    var count = clusterCounts[d[0]] || 0;
+                    return (count / totalPixels * 100).toFixed(1) + "%";
+                })
+                .attr("fill", "black")
+                .attr("font-size", "12px");
+                
+            // 添加颜色名称标签（使用简单的颜色命名）
+            bars.append("text")
+                .attr("x", barWidth / 2)
+                .attr("y", histHeight + 60)
+                .attr("text-anchor", "middle")
+                .text((d) => getColorName(d[1]))
+                .attr("fill", "black")
+                .attr("font-size", "12px");
+        }
+
+        // 简单的颜色命名函数
+        function getColorName(rgb) {
+            var r = rgb[0], g = rgb[1], b = rgb[2];
+            var colors = {
+                "红色": [255, 0, 0],
+                "绿色": [0, 255, 0],
+                "蓝色": [0, 0, 255],
+                "黄色": [255, 255, 0],
+                "紫色": [128, 0, 128],
+                "青色": [0, 255, 255],
+                "粉色": [255, 192, 203],
+                "黑色": [0, 0, 0],
+                "白色": [255, 255, 255],
+                "灰色": [128, 128, 128],
+                "棕色": [165, 42, 42],
+                "橙色": [255, 165, 0]
+            };
+            
+            var minDist = Infinity;
+            var closestColor = "未知";
+            
+            for (var name in colors) {
+                var cr = colors[name][0], cg = colors[name][1], cb = colors[name][2];
+                var dist = Math.sqrt(Math.pow(r - cr, 2) + Math.pow(g - cg, 2) + Math.pow(b - cb, 2));
+                if (dist < minDist) {
+                    minDist = dist;
+                    closestColor = name;
+                }
+            }
+            
+            return closestColor;
+        }
+
+        // 绑定加载按钮事件
+        document.getElementById('loadImage').addEventListener('click', function() {
+            var url = document.getElementById('imageUrl').value.trim();
+            if(!url) {
+                alert("请输入图片URL");
+                return;
+            }
+            loadImage(url);
+            //document.getElementById('extract').disabled = true; // 加载时禁用提取按钮
+            updateCanvasSize(); // 重置画布尺寸
+        });
+
+        // 窗口Resize处理
+        window.addEventListener('resize', function() {
+            updateCanvasSize();
+            if (kmeansResult && pixelData) {
+                createColorHistogram(kmeansResult, pixelData.datargb.length);
+            }
+        });
+        
+        window.onload = function() {
+        // 1. 设置默认图片URL
+            const defaultImageUrl = 'https://images.unsplash.com/photo-1506744038136-46273834b3fb';
+            document.getElementById('imageUrl').value = defaultImageUrl;
+            
+            // 2. 自动加载图片
+            img.onload = function() {
+                var canvasWidth = 512, canvasHeight = 200;
+                var ratio = Math.min(canvasWidth / img.width, canvasHeight / img.height);
+                originalCtx.drawImage(img, 0, 0, img.width * ratio, img.height * ratio);
+                
+                // 3. 自动提取色彩
+                setTimeout(function() {
+                    //document.getElementById('extract').disabled = true;
+                    document.getElementById('extract').click();
+                }, 20);
+            };
+            
+            img.src = defaultImageUrl;
+        };
+
+        // 初始化页面
+        updateCanvasSize();
+        //document.getElementById('extract').disabled = true;
+    </script>
+</body>
+</html>
