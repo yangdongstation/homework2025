@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Iris KMeans 聚类可视化</title>
+  <script src="https://cdn.jsdelivr.net/npm/ml-kmeans@5.0.0/dist/ml-kmeans.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <style>
+    #plot { width: 800px; height: 500px; }
+  </style>
+</head>
+<body>
+  <h2>Iris 数据集 KMeans 聚类可视化</h2>
+  <input type="file" id="fileInput" accept=".csv">
+  <div id="plot"></div>
+  <script>
+    document.getElementById('fileInput').addEventListener('change', function (evt) {
+      const file = evt.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const lines = e.target.result.trim().split("\n");
+        // 假设 CSV 第一行为表头
+        const data = lines.slice(1).map(l => l.split(",").map(x => x.trim()));
+        // 取前4列作为特征
+        const X = data.map(row => row.slice(0, 4).map(Number));
+        // 仅用前两列（花萼长、宽）作二维散点图
+        const X2d = X.map(row => [row[0], row[1]]);
+        // KMeans 聚类
+        const k = 3;
+        const kmeans = mlKMeans(X2d, k);
+        const clusters = kmeans.clusters;
+        const centroids = kmeans.centroids;
+
+        // 按簇分组
+        const colors = ['red', 'green', 'blue'];
+        const traces = [];
+        for (let i = 0; i < k; i++) {
+          const clusterPoints = X2d.filter((_, idx) => clusters[idx] === i);
+          traces.push({
+            x: clusterPoints.map(p => p[0]),
+            y: clusterPoints.map(p => p[1]),
+            mode: 'markers',
+            type: 'scatter',
+            name: `Cluster ${i+1}`,
+            marker: { color: colors[i], size: 8 }
+          });
+        }
+        // 聚类中心
+        traces.push({
+          x: centroids.map(c => c[0]),
+          y: centroids.map(c => c[1]),
+          mode: 'markers',
+          name: 'Centroids',
+          marker: { color: 'black', size: 18, symbol: 'x' },
+          type: 'scatter'
+        });
+        Plotly.newPlot('plot', traces, {
+          xaxis: { title: 'Sepal Length' },
+          yaxis: { title: 'Sepal Width' },
+          title: 'Iris KMeans 聚类（前两维）'
+        });
+      };
+      reader.readAsText(file);
+    });
+  </script>
+  <p>请选择 iris.csv 文件。数据格式要求：sepal_length,sepal_width,petal_length,petal_width,label（带表头）</p>
+</body>
+</html>
