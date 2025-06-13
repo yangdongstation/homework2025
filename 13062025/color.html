@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>图片主色调提取（KMeans聚类）</title>
+  <script src="https://cdn.jsdelivr.net/npm/ml-kmeans@5.0.0/dist/ml-kmeans.min.js"></script>
+  <style>
+    #canvas {border:1px solid #aaa;}
+    .color-bar {display: flex; margin-top: 10px;}
+    .color-block {
+      width: 60px; height: 60px; margin-right: 8px;
+      border: 1px solid #444; box-sizing: border-box;
+      display: flex; flex-direction:column; align-items:center; justify-content:center;
+      font-size: 13px; color: #222; background: #f8f8f8;
+    }
+    .color-sample {width: 36px; height: 36px; border:1px solid #aaa; margin-bottom: 5px;}
+  </style>
+</head>
+<body>
+  <h2>图片主色调提取（KMeans聚类）</h2>
+  <input type="file" id="imgInput" accept="image/*">
+  <label>聚类数K: <input type="number" id="kInput" value="5" min="2" max="10" style="width:40px"></label>
+  <button onclick="extractColors()">提取主色</button>
+  <br><br>
+  <canvas id="canvas" width="400" height="300" style="display:none"></canvas>
+  <div class="color-bar" id="colorBar"></div>
+  <script>
+    let img = new Image();
+    let imgData = null;
+
+    document.getElementById('imgInput').addEventListener('change', function(evt){
+      const file = evt.target.files[0];
+      if (!file) return;
+      img = new Image();
+      img.onload = function(){
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        // 调整canvas大小适应图片
+        canvas.width = img.width > 400 ? 400 : img.width;
+        canvas.height = img.height > 300 ? 300 : img.height;
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        canvas.style.display = '';
+      };
+      img.src = URL.createObjectURL(file);
+    });
+
+    function extractColors() {
+      if (!imgData) return alert("请先选择图片");
+      const k = parseInt(document.getElementById('kInput').value) || 5;
+      // 收集像素（可降采样加速，取每n像素一个）
+      let pixels = [];
+      let data = imgData.data;
+      let step = 4 * 3; // 每隔3像素采样
+      for(let i=0; i<data.length; i+=step) {
+        let r = data[i], g = data[i+1], b = data[i+2];
+        // 忽略透明像素
+        if(data[i+3] > 128) {
+          pixels.push([r,g,b]);
+        }
+      }
+      // KMeans 聚类
+      const result = mlKMeans(pixels, k);
+      const centers = result.centroids;
+      // 统计每个中心的像素数量
+      let counts = new Array(k).fill(0);
+      result.clusters.forEach(idx => counts[idx]++);
+      // 排序（主要色在前）
+      let centerData = centers.map((c,i)=>({color: c, count: counts[i]}));
+      centerData.sort((a,b)=>b.count-a.count);
+
+      // 展示色块
+      const colorBar = document.getElementById('colorBar');
+      colorBar.innerHTML = '';
+      for(let i=0;i<k;i++){
+        const c = centerData[i].color.map(Math.round);
+        const hex = '#' + c.map(x=>x.toString(16).padStart(2,'0')).join('');
+        const perc = (centerData[i].count/pixels.length*100).toFixed(1);
+        const block = document.createElement('div');
+        block.className = 'color-block';
+        block.innerHTML = `<div class="color-sample" style="background:${hex}"></div>
+          <div>${hex}</div>
+          <div>${perc}%</div>`;
+        colorBar.appendChild(block);
+      }
+    }
+  </script>
+  <p>选择图片后点击“提取主色”，可调整K值（主色数量）。结果显示每种主色的色值和占比。</p>
+</body>
+</html>
