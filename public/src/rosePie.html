@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>Rose Pie | 极坐标玫瑰图</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- D3.js v7 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+  <style>
+    body {
+      background: #0B1F33;
+      color: #fff;
+      font-family: "Helvetica Neue", Arial, sans-serif;
+    }
+    #rose-pie-app {
+      margin: 24px auto;
+      width: 600px;
+      min-height: 600px;
+      box-shadow: 0 2px 12px #0003;
+      background: #0B1F33;
+      border-radius: 8px;
+      padding: 8px;
+    }
+    .title {
+      color: #F7B267;
+      font-size: 1.7em;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+    .subtitle {
+      color: #fff;
+      font-size: 1.1em;
+      text-align: center;
+      margin-bottom: 8px;
+      opacity: 0.8;
+    }
+    .rose-legend {
+      margin: 10px auto 0 auto;
+      width: 580px;
+      text-align: left;
+      font-size: 14px;
+      color: #eee;
+      padding-left: 12px;
+    }
+    .rose-legend span {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <div class="title">Rose Pie（极坐标玫瑰图）</div>
+  <div class="subtitle">按人口密度分组的国家数分布（每瓣角度=国家数，半径=平均密度）</div>
+  <div id="rose-pie-app"></div>
+  <div class="rose-legend" id="rose-legend"></div>
+  <script type="module">
+    // rosePie.js inlined
+    const DATA_URL = '/public/data/merged_filtered.json';
+
+    main();
+    async function main() {
+      const container = document.getElementById('rose-pie-app');
+      container.innerHTML = "";
+
+      const width = 600;
+      const height = 600;
+      const innerRadius = 60;
+      const outerMax = 250;
+      const accentColor = "#F7B267";
+      const colorPalette = d3.schemeCategory10;
+
+      // 加载数据
+      let data;
+      try {
+        data = await d3.json(DATA_URL);
+      } catch (e) {
+        container.innerHTML = "<div style='color:#F7B267;font-size:18px;padding:20px;'>数据加载失败，缺少 merged_filtered.json</div>";
+        return;
+      }
+
+      // 玫瑰图分组：按人口密度分箱（如5组：极低、低、中、高、极高）
+      const bins = [
+        { label: "极低密度", range: [0, 0.005] },
+        { label: "低密度",   range: [0.005, 0.01] },
+        { label: "中密度",   range: [0.01, 0.03] },
+        { label: "高密度",   range: [0.03, 0.08] },
+        { label: "极高密度", range: [0.08, Infinity] }
+      ];
+
+      // 分配数据到分组
+      const groups = bins.map((bin, i) => ({
+        label: bin.label,
+        color: colorPalette[i % colorPalette.length],
+        countries: data.filter(d =>
+          d.density_wan_per_km2 >= bin.range[0] &&
+          d.density_wan_per_km2 < bin.range[1]
+        )
+      }));
+
+      // 统计每组
+      groups.forEach(g => {
+        g.count = g.countries.length;
+        g.meanDensity = g.count > 0
+          ? d3.mean(g.countries, d => d.density_wan_per_km2)
+          : 0;
+      });
+
+      // 绘制SVG
+      const svg = d3.select(container)
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+      const g = svg.append("g")
+        .attr("transform", `translate(${width/2},${height/2})`);
+
+      // 角度比例尺：每瓣的角度 = 国家数/总数
+      const totalCount = d3.sum(groups, g => g.count);
+      const angleScale = d3.scaleLinear()
+        .domain([0, totalCount])
+        .range([0, 2 * Math.PI]);
+
+      // 半径比例尺：平均人口密度（按分组最大平均密度归一化）
+      const maxMeanDensity = d3.max(groups, g => g.meanDensity);
+      const radiusScale = d3.scaleSqrt()
+        .domain([0, maxMeanDensity])
+        .range([innerRadius, outerMax]);
+
+      // 计算每瓣的起止角
+      let current = 0;
+      groups.forEach(g => {
+        g.startAngle = angleScale(current);
+        g.endAngle = angleScale(current + g.count);
+        g.midAngle = (g.startAngle + g.endAngle) / 2;
+        current += g.count;
+      });
+
+      // 绘制玫瑰瓣
+      const arc = d3.arc()
+        .innerRadius(innerRadius)
+        .outerRadius(d => radiusScale(d.meanDensity))
+        .startAngle(d => d.startAngle)
+        .endAngle(d => d.endAngle);
+
+      g.selectAll("path")
+        .data(groups)
+        .enter()
+        .append("path")
+        .attr("d", arc)
+        .attr("fill", d => d.color)
+        .attr("fill-opacity", 0.8)
+        .attr("stroke", "#fff")
+        .attr("stroke-width", 1.2)
+        .on("mouseover", function(e, d) {
+          d3.select(this).attr("fill-opacity", 1).attr("stroke-width", 2);
+          showTooltip(svg, d, e.pageX, e.pageY);
+        })
+        .on("mouseout", function(e, d) {
+          d3.select(this).attr("fill-opacity", 0.8).attr("stroke-width", 1.2);
+          hideTooltip(svg);
+        });
+
+      // 绘制分组标签
+      g.selectAll("text")
+        .data(groups)
+        .enter()
+        .append("text")
+        .attr("x", d => Math.cos(d.midAngle - Math.PI/2) * (radiusScale(d.meanDensity) + 22))
+        .attr("y", d => Math.sin(d.midAngle - Math.PI/2) * (radiusScale(d.meanDensity) + 22))
+        .attr("text-anchor", d => d.midAngle > Math.PI ? "end" : "start")
+        .attr("fill", "#fff")
+        .attr("font-size", 15)
+        .attr("font-weight", "bold")
+        .text(d => d.label);
+
+      // 简单图例
+      const legend = document.getElementById("rose-legend");
+      legend.innerHTML = groups.map(g =>
+        `<span style="background:${g.color};border-radius:3px;"></span> ${g.label}（${g.count}国，平均密度${g.meanDensity.toFixed(4)}万/km²）`
+      ).join("<br>");
+
+      // Tooltip
+      function showTooltip(svg, d, x, y) {
+        hideTooltip(svg);
+        svg.append("text")
+          .attr("id", "rosepie-tooltip")
+          .attr("x", x - 160)
+          .attr("y", y - 60)
+          .attr("fill", "#fff")
+          .attr("font-size", 16)
+          .attr("font-weight", "bold")
+          .text(`${d.label}: ${d.count}国，平均密度${d.meanDensity.toFixed(4)}万/km²`);
+      }
+      function hideTooltip(svg) {
+        svg.select("#rosepie-tooltip").remove();
+      }
+    }
+  </script>
+</body>
+</html>
