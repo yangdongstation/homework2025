@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hexbin | 蜂巢热力图</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- D3.js v7 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+  <!-- D3-hexbin CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/d3-hexbin@0.2.2/build/d3-hexbin.min.js"></script>
+  <!-- TopoJSON CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+  <style>
+    body {
+      background: #0B1F33;
+      color: #fff;
+      font-family: "Helvetica Neue", Arial, sans-serif;
+    }
+    #hexbin-app {
+      margin: 24px auto;
+      width: 960px;
+      min-height: 540px;
+      box-shadow: 0 2px 12px #0003;
+      background: #0B1F33;
+      border-radius: 8px;
+      padding: 8px;
+    }
+    .title {
+      color: #F7B267;
+      font-size: 1.7em;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+    .subtitle {
+      color: #fff;
+      font-size: 1.1em;
+      text-align: center;
+      margin-bottom: 8px;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <div class="title">Hexbin（蜂巢热力图）</div>
+  <div class="subtitle">国家分布，蜂窝大小/颜色按人口密度渲染</div>
+  <div id="hexbin-app"></div>
+  <script type="module">
+    // hexbin.js inlined
+    const DATA_URL = '/public/data/merged_filtered.json';
+    const WORLD_MAP_URL = '/public/assets/world-110m.json'; // 需要准备 TopoJSON
+
+    main();
+    async function main() {
+      const container = document.getElementById('hexbin-app');
+      container.innerHTML = "";
+
+      const width = 960;
+      const height = 540;
+
+      // 创建 SVG
+      const svg = d3.select(container)
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .style("background", "#0B1F33");
+
+      // 投影
+      const projection = d3.geoNaturalEarth1()
+        .scale(180)
+        .translate([width / 2, height / 2]);
+
+      const path = d3.geoPath().projection(projection);
+
+      let world, countries;
+      try {
+        [world, countries] = await Promise.all([
+          d3.json(WORLD_MAP_URL),
+          d3.json(DATA_URL)
+        ]);
+      } catch (e) {
+        container.innerHTML = "<div style='color:#F7B267;font-size:18px;padding:20px;'>数据或地图加载失败</div>";
+        return;
+      }
+
+      // 绘制底图
+      const land = topojson.feature(world, world.objects.countries);
+      svg.append("g")
+        .selectAll("path")
+        .data(land.features)
+        .enter()
+        .append("path")
+        .attr("fill", "#123456")
+        .attr("stroke", "#fff")
+        .attr("stroke-width", 0.2)
+        .attr("d", path);
+
+      // 建立国家名到地理特征的映射
+      const nameMap = {};
+      land.features.forEach(f => {
+        const name = f.properties.name || f.properties.admin;
+        if (name) nameMap[name.toLowerCase()] = f;
+      });
+
+      // 计算每个国家的投影坐标
+      const points = countries.map(d => {
+        const feature = nameMap[d.country.toLowerCase()];
+        let centroid = [-100, -100];
+        if (feature) centroid = projection(d3.geoCentroid(feature));
+        return {
+          ...d,
+          x: centroid[0],
+          y: centroid[1]
+        };
+      }).filter(d => d.x > 0 && d.y > 0); // 过滤无效点
+
+      // D3 hexbin 设置
+      const hexbin = d3.hexbin()
+        .x(d => d.x)
+        .y(d => d.y)
+        .radius(16)
+        .extent([[0, 0], [width, height]]);
+
+      // 蜂窝密度：用人口密度（density_wan_per_km2）决定颜色
+      const densExtent = d3.extent(points, d => d.density_wan_per_km2);
+      const colorScale = d3.scaleSequential(d3.interpolateYlOrRd)
+        .domain([densExtent[0], densExtent[1]]);
+
+      // 聚合
+      const bins = hexbin(points);
+
+      // 绘制蜂窝
+      svg.append("g")
+        .selectAll("path")
+        .data(bins)
+        .enter()
+        .append("path")
+        .attr("d", hexbin.hexagon())
+        .attr("transform", d => `translate(${d.x},${d.y})`)
+        .attr("fill", d => {
+          const avgDensity = d3.mean(d, p => p.density_wan_per_km2);
+          return colorScale(avgDensity);
+        })
+        .attr("fill-opacity", 0.8)
+        .attr("stroke", "#fff")
+        .attr("stroke-width", 0.6)
+        .on("mouseover", function(e, d) {
+          d3.select(this).attr("fill", "#F7B267").attr("fill-opacity", 1);
+          showTooltip(svg, d, e.pageX, e.pageY);
+        })
+        .on("mouseout", function(e, d) {
+          d3.select(this)
+            .attr("fill", colorScale(d3.mean(d, p => p.density_wan_per_km2)))
+            .attr("fill-opacity", 0.8);
+          hideTooltip(svg);
+        });
+
+      // Tooltip
+      function showTooltip(svg, d, x, y) {
+        hideTooltip(svg);
+        const names = d.map(p => p.country).join(", ");
+        const avgDensity = d3.mean(d, p => p.density_wan_per_km2);
+        svg.append("text")
+          .attr("id", "hexbin-tooltip")
+          .attr("x", x - 90)
+          .attr("y", y - 60)
+          .attr("fill", "#fff")
+          .attr("font-size", 15)
+          .attr("font-weight", "bold")
+          .text(`${names} 平均密度: ${avgDensity.toFixed(4)} 万/km²`);
+      }
+      function hideTooltip(svg) {
+        svg.select("#hexbin-tooltip").remove();
+      }
+    }
+  </script>
+</body>
+</html>
