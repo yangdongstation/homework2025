@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>Parallel Coordinates | 平行坐标图</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- D3.js v7 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+  <style>
+    body {
+      background: #0B1F33;
+      color: #fff;
+      font-family: "Helvetica Neue", Arial, sans-serif;
+    }
+    #parallel-app {
+      margin: 24px auto;
+      width: 960px;
+      min-height: 540px;
+      box-shadow: 0 2px 12px #0003;
+      background: #0B1F33;
+      border-radius: 8px;
+      padding: 8px;
+    }
+    .title {
+      color: #F7B267;
+      font-size: 1.7em;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+    .subtitle {
+      color: #fff;
+      font-size: 1.1em;
+      text-align: center;
+      margin-bottom: 8px;
+      opacity: 0.8;
+    }
+    .axis-label {
+      fill: #fff;
+      font-size: 14px;
+      font-weight: bold;
+      text-anchor: middle;
+    }
+    .brush .selection {
+      fill: #F7B267 !important;
+      fill-opacity: 0.15 !important;
+      stroke: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="title">Parallel Coordinates（国家多变量平行坐标图）</div>
+  <div class="subtitle">每条线代表一个国家，维度包括人口、面积、密度，支持刷选高亮</div>
+  <div id="parallel-app"></div>
+  <script type="module">
+    const DATA_URL = '/public/data/merged_filtered.json';
+
+    main();
+    async function main() {
+      const container = document.getElementById('parallel-app');
+      container.innerHTML = "";
+
+      const width = 960;
+      const height = 540;
+      const margin = { top: 60, right: 40, bottom: 30, left: 40 };
+      const accentColor = "#F7B267";
+      const axisColor = "#fff";
+
+      // 选取维度
+      const dimensions = [
+        { key: "population_wan", label: "人口(万)" },
+        { key: "area", label: "面积(km²)" },
+        { key: "density_wan_per_km2", label: "密度(万/km²)" }
+      ];
+
+      // 加载数据
+      let data;
+      try {
+        data = await d3.json(DATA_URL);
+      } catch (e) {
+        container.innerHTML = "<div style='color:#F7B267;font-size:18px;padding:20px;'>数据加载失败，缺少 merged_filtered.json</div>";
+        return;
+      }
+
+      // 构建比例尺
+      const yScales = {};
+      dimensions.forEach(dim => {
+        const extent = d3.extent(data, d => d[dim.key]);
+        yScales[dim.key] = d3.scaleLinear()
+          .domain(extent)
+          .range([height - margin.bottom, margin.top]);
+      });
+
+      // X位置比例尺（维度分布）
+      const xScale = d3.scalePoint()
+        .domain(dimensions.map(d => d.key))
+        .range([margin.left, width - margin.right])
+        .padding(0.5);
+
+      // 创建SVG
+      const svg = d3.select(container)
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .style("background", "#0B1F33");
+
+      // 绘制每个国家的线
+      const foreground = svg.append("g")
+        .attr("class", "foreground");
+
+      const path = d => d3.line()(dimensions.map(dim => [
+        xScale(dim.key),
+        yScales[dim.key](d[dim.key])
+      ]));
+
+      foreground.selectAll("path")
+        .data(data)
+        .enter()
+        .append("path")
+        .attr("d", path)
+        .attr("stroke", accentColor)
+        .attr("stroke-width", 1.2)
+        .attr("fill", "none")
+        .attr("opacity", 0.55)
+        .on("mouseover", function(e, d) {
+          d3.select(this).attr("stroke", "#fff").attr("stroke-width", 2).attr("opacity", 1);
+          showTooltip(svg, d, e.pageX, e.pageY);
+        })
+        .on("mouseout", function(e, d) {
+          d3.select(this).attr("stroke", accentColor).attr("stroke-width", 1.2).attr("opacity", 0.55);
+          hideTooltip(svg);
+        });
+
+      // 绘制坐标轴
+      const axes = svg.selectAll(".axis")
+        .data(dimensions)
+        .enter()
+        .append("g")
+        .attr("class", "axis")
+        .attr("transform", d => `translate(${xScale(d.key)},0)`);
+
+      axes.each(function(dim) {
+        d3.select(this).call(
+          d3.axisLeft(yScales[dim.key])
+            .ticks(7)
+            .tickSizeOuter(0)
+        );
+      });
+
+      axes.selectAll("text")
+        .attr("fill", axisColor)
+        .attr("font-size", 12);
+
+      axes.append("text")
+        .attr("class", "axis-label")
+        .attr("y", margin.top - 24)
+        .attr("x", 0)
+        .text(d => d.label);
+
+      axes.selectAll("path")
+        .attr("stroke", axisColor)
+        .attr("stroke-width", 1.5);
+
+      axes.selectAll("line")
+        .attr("stroke", axisColor)
+        .attr("stroke-width", 1);
+
+      // Brush交互（每轴都可刷选），支持联动高亮
+      let actives = {};
+      axes.append("g")
+        .attr("class", "brush")
+        .each(function(dim) {
+          d3.select(this).call(
+            d3.brushY()
+              .extent([[-15, margin.top], [15, height - margin.bottom]])
+              .on("brush", brush)
+              .on("end", brush)
+          );
+        });
+
+      function brush(event, dim) {
+        if (!event.selection) {
+          actives[dim.key] = null;
+        } else {
+          actives[dim.key] = event.selection.map(yScales[dim.key].invert);
+        }
+        // 过滤数据
+        foreground.selectAll("path")
+          .attr("stroke", function(d) {
+            return isBrushed(d) ? "#fff" : accentColor;
+          })
+          .attr("opacity", function(d) {
+            return isBrushed(d) ? 1 : 0.15;
+          });
+      }
+
+      function isBrushed(d) {
+        return dimensions.every(dim => {
+          const range = actives[dim.key];
+          if (!range) return true;
+          return d[dim.key] >= Math.min(...range) && d[dim.key] <= Math.max(...range);
+        });
+      }
+
+      // Tooltip
+      function showTooltip(svg, d, x, y) {
+        hideTooltip(svg);
+        svg.append("text")
+          .attr("id", "parallel-tooltip")
+          .attr("x", x - 120)
+          .attr("y", y - 60)
+          .attr("fill", "#fff")
+          .attr("font-size", 15)
+          .attr("font-weight", "bold")
+          .text(`${d.country} 人口:${d.population_wan}万 面积:${d.area}km² 密度:${d.density_wan_per_km2.toFixed(4)}万/km²`);
+      }
+      function hideTooltip(svg) {
+        svg.select("#parallel-tooltip").remove();
+      }
+    }
+  </script>
+</body>
+</html>
