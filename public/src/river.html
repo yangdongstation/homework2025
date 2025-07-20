@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>River Chart | 时间流河图</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- D3.js v7 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+  <style>
+    body {
+      background: #0B1F33;
+      color: #fff;
+      font-family: "Helvetica Neue", Arial, sans-serif;
+    }
+    #river-app {
+      margin: 24px auto;
+      width: 960px;
+      min-height: 540px;
+      box-shadow: 0 2px 12px #0003;
+      background: #0B1F33;
+      border-radius: 8px;
+      padding: 8px;
+    }
+    .title {
+      color: #F7B267;
+      font-size: 1.7em;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+    .subtitle {
+      color: #fff;
+      font-size: 1.1em;
+      text-align: center;
+      margin-bottom: 8px;
+      opacity: 0.8;
+    }
+    .legend {
+      width: 960px;
+      margin: 0 auto 10px auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #fff;
+      justify-content: flex-end;
+    }
+    .legend-color {
+      width: 22px;
+      height: 18px;
+      display: inline-block;
+      margin-right: 4px;
+      border-radius: 4px;
+      border: 1px solid #fff;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <div class="title">River Chart（Stacked Stream 时间流河图）</div>
+  <div class="subtitle">按洲分组，展示国家数量随年份变化的流河图</div>
+  <div class="legend" id="river-legend"></div>
+  <div id="river-app"></div>
+  <script type="module">
+    // river.js inlined
+    // 假定数据格式：每个国家有 country, continent, year, population_wan
+    // 1. 按洲分组统计每年国家数量
+    // 2. 绘制堆叠流河图
+
+    const DATA_URL = '/public/data/merged_filtered.json';
+
+    main();
+    async function main() {
+      const container = document.getElementById('river-app');
+      container.innerHTML = "";
+
+      const width = 960;
+      const height = 540;
+      const margin = { top: 40, right: 40, bottom: 40, left: 60 };
+
+      // 主题色
+      const accentColor = "#F7B267";
+      const colorPalette = d3.schemeCategory10;
+
+      // 加载数据
+      let data;
+      try {
+        data = await d3.json(DATA_URL);
+      } catch (e) {
+        container.innerHTML = "<div style='color:#F7B267;font-size:18px;padding:20px;'>数据加载失败，缺少 merged_filtered.json</div>";
+        return;
+      }
+
+      // 需要有年份字段, 如没有可随机生成或统一用 2020
+      if (!data[0].year) {
+        data.forEach(d => d.year = 2020);
+      }
+
+      // 洲名列表
+      const continents = Array.from(new Set(data.map(d => d.continent || "未知"))).sort();
+      // 年份列表
+      const years = Array.from(new Set(data.map(d => d.year))).sort();
+
+      // 统计每年每洲的国家数
+      const riverData = years.map(year => {
+        const yearData = {};
+        yearData.year = year;
+        continents.forEach(continent => {
+          yearData[continent] = data.filter(d => (d.year === year) && ((d.continent || "未知") === continent)).length;
+        });
+        return yearData;
+      });
+
+      // 堆叠数据
+      const stack = d3.stack()
+        .keys(continents)
+        .order(d3.stackOrderNone)
+        .offset(d3.stackOffsetWiggle);
+
+      const series = stack(riverData);
+
+      // X轴：年份
+      const xScale = d3.scalePoint()
+        .domain(years)
+        .range([margin.left, width - margin.right]);
+
+      // Y轴：国家数量总和
+      const maxY = d3.max(series, s => d3.max(s, d => d[1]));
+      const minY = d3.min(series, s => d3.min(s, d => d[0]));
+      const yScale = d3.scaleLinear()
+        .domain([minY, maxY])
+        .range([height - margin.bottom, margin.top]);
+
+      // SVG
+      const svg = d3.select(container)
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .style("background", "#0B1F33");
+
+      // 绘制流河
+      const area = d3.area()
+        .x((d, i) => xScale(years[i]))
+        .y0(d => yScale(d[0]))
+        .y1(d => yScale(d[1]))
+        .curve(d3.curveCatmullRom);
+
+      svg.selectAll(".stream")
+        .data(series)
+        .enter()
+        .append("path")
+        .attr("class", "stream")
+        .attr("d", area)
+        .attr("fill", (d, i) => colorPalette[i % colorPalette.length])
+        .attr("fill-opacity", 0.82)
+        .attr("stroke", "#fff")
+        .attr("stroke-width", 0.7)
+        .on("mouseover", function(e, d) {
+          d3.select(this).attr("fill-opacity", 1).attr("stroke-width", 2);
+          showTooltip(svg, d, e.pageX, e.pageY, d.key);
+        })
+        .on("mouseout", function(e, d) {
+          d3.select(this).attr("fill-opacity", 0.82).attr("stroke-width", 0.7);
+          hideTooltip(svg);
+        });
+
+      // X轴
+      svg.append("g")
+        .attr("transform", `translate(0,${height - margin.bottom})`)
+        .call(
+          d3.axisBottom(xScale)
+            .tickSizeOuter(0)
+        )
+        .selectAll("text")
+        .attr("fill", "#fff")
+        .attr("font-size", 13);
+
+      // Y轴
+      svg.append("g")
+        .attr("transform", `translate(${margin.left},0)`)
+        .call(
+          d3.axisLeft(yScale)
+            .ticks(8)
+            .tickSizeOuter(0)
+        )
+        .selectAll("text")
+        .attr("fill", "#fff")
+        .attr("font-size", 13);
+
+      svg.append("text")
+        .attr("x", margin.left)
+        .attr("y", margin.top - 10)
+        .attr("fill", "#F7B267")
+        .attr("font-size", 15)
+        .attr("font-weight", "bold")
+        .text("国家数量");
+
+      // 图例
+      renderLegend(continents, colorPalette);
+
+      // Tooltip
+      function showTooltip(svg, d, x, y, key) {
+        hideTooltip(svg);
+        svg.append("text")
+          .attr("id", "river-tooltip")
+          .attr("x", x - 120)
+          .attr("y", y - 60)
+          .attr("fill", "#fff")
+          .attr("font-size", 16)
+          .attr("font-weight", "bold")
+          .text(`${key}洲`);
+      }
+      function hideTooltip(svg) {
+        svg.select("#river-tooltip").remove();
+      }
+
+      function renderLegend(continents, palette) {
+        const legend = document.getElementById("river-legend");
+        legend.innerHTML = continents.map((c, i) =>
+          `<span class="legend-color" style="background:${palette[i % palette.length]}"></span>${c}`
+        ).join(" ");
+      }
+    }
+  </script>
+</body>
+</html>
