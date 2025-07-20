@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>主题色样式预览（Style Preview）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      background: #0B1F33;
+      color: #fff;
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .title {
+      color: #F7B267;
+      font-size: 1.7em;
+      margin-top: 30px;
+      margin-bottom: 4px;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+    .subtitle {
+      color: #fff;
+      font-size: 1.1em;
+      text-align: center;
+      margin-bottom: 8px;
+      opacity: 0.8;
+    }
+    .swatches {
+      display: flex;
+      gap: 24px;
+      margin: 32px 0;
+    }
+    .swatch {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 140px;
+    }
+    .swatch-box {
+      width: 72px;
+      height: 72px;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px #0003;
+      margin-bottom: 12px;
+      border: 2px solid #fff;
+    }
+    .swatch-label {
+      color: #fff;
+      font-size: 16px;
+      margin-bottom: 2px;
+    }
+    .swatch-code {
+      color: #F7B267;
+      font-size: 13px;
+      letter-spacing: 1px;
+    }
+    .usage {
+      color: #fff;
+      font-size: 15px;
+      margin-top: 22px;
+      opacity: 0.85;
+      max-width: 520px;
+      text-align: center;
+      line-height: 1.75;
+    }
+    .sample-btn {
+      background: #F7B267;
+      color: #123456;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 32px;
+      font-size: 18px;
+      font-weight: bold;
+      box-shadow: 0 2px 8px #0B1F33;
+      margin-top: 20px;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: background 0.2s;
+    }
+    .sample-btn:hover {
+      background: #FFCB80;
+    }
+  </style>
+</head>
+<body>
+  <div class="title">主题色样式预览</div>
+  <div class="subtitle">统一色彩风格，便于可视化页面设计复用</div>
+  <div class="swatches">
+    <div class="swatch">
+      <div class="swatch-box" style="background:#0B1F33"></div>
+      <div class="swatch-label">主背景色</div>
+      <div class="swatch-code">#0B1F33</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-box" style="background:#123456"></div>
+      <div class="swatch-label">地图/辅助色</div>
+      <div class="swatch-code">#123456</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-box" style="background:#F7B267"></div>
+      <div class="swatch-label">强调色</div>
+      <div class="swatch-code">#F7B267</div>
+    </div>
+  </div>
+  <div class="usage">
+    <b>推荐用法：</b><br>
+    主背景色用于页面底色，强调色用于高亮、数据点、按钮等元素，地图/辅助色适合底图或分区填充。按钮等控件可采用强调色背景+主色文字。
+  </div>
+  <button class="sample-btn" onclick="alert('主题色示例：#F7B267')">主题色按钮示例</button>
+</body>
+</html>

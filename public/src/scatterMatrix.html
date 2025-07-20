@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>Scatter Matrix Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- D3.js v7 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+  <style>
+    body {
+      background: #0B1F33;
+      color: #fff;
+      font-family: "Helvetica Neue", Arial, sans-serif;
+    }
+    #scatter-matrix-app {
+      margin: 24px auto;
+      width: 960px;
+      min-height: 540px;
+      box-shadow: 0 2px 12px #0003;
+      background: #0B1F33;
+      border-radius: 8px;
+      padding: 8px;
+    }
+    .title {
+      color: #F7B267;
+      font-size: 1.7em;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="title">Scatter Matrix（Brush联动散点矩阵）</div>
+  <div id="scatter-matrix-app"></div>
+  <script type="module">
+    // scatterMatrix.js inlined
+    const DATA_URL = '/public/data/merged_filtered.json';
+
+    const VARIABLES = [
+      { key: 'population_wan', label: '人口(万)' },
+      { key: 'area', label: '面积(km²)' },
+      { key: 'density_wan_per_km2', label: '密度(万/km²)' }
+    ];
+
+    main();
+    async function main() {
+      const container = document.getElementById('scatter-matrix-app');
+      container.innerHTML = "";
+
+      const width = 960;
+      const height = 540;
+      const padding = 40;
+      const cellSize = Math.floor((width - padding) / VARIABLES.length);
+
+      // 加载数据
+      let data;
+      try {
+        data = await d3.json(DATA_URL);
+      } catch (e) {
+        container.innerHTML = "<div style='color:#F7B267;font-size:18px;padding:20px;'>数据加载失败，缺少 merged_filtered.json</div>";
+        return;
+      }
+
+      // 构建比例尺
+      const scales = {};
+      VARIABLES.forEach(v => {
+        const extent = d3.extent(data, d => d[v.key]);
+        scales[v.key] = d3.scaleLinear().domain(extent).range([padding, cellSize - padding]);
+      });
+
+      // 创建 SVG
+      const svg = d3.select(container)
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .style("background", "#0B1F33");
+
+      // 绘制散点矩阵，每个 cell 是一个变量对
+      for (let i = 0; i < VARIABLES.length; i++) {
+        for (let j = 0; j < VARIABLES.length; j++) {
+          drawCell(i, j);
+        }
+      }
+
+      // Brush 联动
+      let brushCell;
+      const brush = d3.brush()
+        .extent([[0, 0], [cellSize, cellSize]])
+        .on("start", brushstart)
+        .on("brush", brushed)
+        .on("end", brushend);
+
+      function drawCell(i, j) {
+        const varX = VARIABLES[i].key;
+        const varY = VARIABLES[j].key;
+
+        const g = svg.append("g")
+          .attr("transform", `translate(${i * cellSize},${j * cellSize})`);
+
+        // cell 背景
+        g.append("rect")
+          .attr("width", cellSize)
+          .attr("height", cellSize)
+          .attr("fill", "#123456")
+          .attr("stroke", "#fff")
+          .attr("stroke-width", 0.2);
+
+        // 坐标轴标签（上面和左侧）
+        if (j === 0) {
+          g.append("text")
+            .attr("x", cellSize / 2)
+            .attr("y", 15)
+            .attr("text-anchor", "middle")
+            .attr("fill", "#fff")
+            .attr("font-size", 14)
+            .text(VARIABLES[i].label);
+        }
+        if (i === 0) {
+          g.append("text")
+            .attr("x", 15)
+            .attr("y", cellSize / 2)
+            .attr("text-anchor", "middle")
+            .attr("fill", "#fff")
+            .attr("font-size", 14)
+            .attr("transform", `rotate(-90,15,${cellSize/2})`)
+            .text(VARIABLES[j].label);
+        }
+
+        // 绘制散点
+        const points = g.selectAll("circle")
+          .data(data)
+          .enter()
+          .append("circle")
+          .attr("cx", d => scales[varX](d[varX]))
+          .attr("cy", d => cellSize - scales[varY](d[varY]))
+          .attr("r", 4)
+          .attr("fill", "#F7B267")
+          .attr("fill-opacity", 0.7)
+          .attr("stroke", "#fff")
+          .attr("stroke-width", 0.7)
+          .on("mouseover", function(e, d) {
+            d3.select(this).attr("fill", "#fff");
+            showTooltip(svg, d, e.pageX, e.pageY);
+          })
+          .on("mouseout", function(e, d) {
+            d3.select(this).attr("fill", "#F7B267");
+            hideTooltip(svg);
+          });
+
+        // 添加 brush，仅对下三角区域可刷选（避免重复）
+        if (i > j) {
+          g.append("g")
+            .attr("class", "brush")
+            .call(brush);
+        }
+      }
+
+      // Brush 事件
+      function brushstart({target}) {
+        if (brushCell !== this) {
+          d3.select(brushCell).call(brush.move, null);
+          brushCell = this;
+        }
+      }
+
+      function brushed(event) {
+        const selection = event.selection;
+        if (!selection) return;
+
+        // 当前 cell 坐标
+        const g = d3.select(this.parentNode);
+        const transform = g.attr("transform");
+        const i = Math.floor(+transform.match(/translate\((\d+)/)[1] / cellSize);
+        const j = Math.floor(+transform.match(/,\s?(\d+)/)[1] / cellSize);
+
+        const varX = VARIABLES[i].key;
+        const varY = VARIABLES[j].key;
+
+        g.selectAll("circle")
+          .attr("fill", function(d) {
+            const x = scales[varX](d[varX]);
+            const y = cellSize - scales[varY](d[varY]);
+            return selection[0][0] <= x && x <= selection[1][0] && selection[0][1] <= y && y <= selection[1][1]
+              ? "#fff"
+              : "#F7B267";
+          })
+          .attr("fill-opacity", function(d) {
+            const x = scales[varX](d[varX]);
+            const y = cellSize - scales[varY](d[varY]);
+            return selection[0][0] <= x && x <= selection[1][0] && selection[0][1] <= y && y <= selection[1][1]
+              ? 1
+              : 0.7;
+          });
+      }
+
+      function brushend(event) {
+        if (!event.selection) {
+          d3.select(this.parentNode).selectAll("circle")
+            .attr("fill", "#F7B267")
+            .attr("fill-opacity", 0.7);
+        }
+      }
+
+      // Tooltip
+      function showTooltip(svg, d, x, y) {
+        hideTooltip(svg);
+        svg.append("text")
+          .attr("id", "scatter-tooltip")
+          .attr("x", x - 120)
+          .attr("y", y - 60)
+          .attr("fill", "#fff")
+          .attr("font-size", 15)
+          .attr("font-weight", "bold")
+          .text(`${d.country} 人口:${d.population_wan}万 面积:${d.area}km² 密度:${d.density_wan_per_km2.toFixed(4)}万/km²`);
+      }
+      function hideTooltip(svg) {
+        svg.select("#scatter-tooltip").remove();
+      }
+    }
+  </script>
+</body>
+</html>
