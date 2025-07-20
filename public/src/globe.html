@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>3D Globe | Three.js 地球柱状图</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Three.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/examples/js/controls/OrbitControls.js"></script>
+  <style>
+    body {
+      background: #0B1F33;
+      color: #fff;
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+    }
+    #globe-app {
+      margin: 24px auto;
+      width: 960px;
+      height: 560px;
+      box-shadow: 0 2px 12px #0003;
+      background: #0B1F33;
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .title {
+      color: #F7B267;
+      font-size: 1.7em;
+      margin-top: 20px;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+    .desc {
+      color: #fff;
+      font-size: 1em;
+      text-align: center;
+      margin-bottom: 8px;
+      opacity: 0.8;
+    }
+    #globe-info {
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      background: rgba(12,31,51,0.9);
+      color: #F7B267;
+      padding: 7px 18px;
+      border-radius: 8px;
+      font-size: 15px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+      z-index: 2;
+    }
+  </style>
+</head>
+<body>
+  <div class="title">Three.js 3D地球柱状图</div>
+  <div class="desc">柱高代表人口（万），颜色代表人口密度</div>
+  <div id="globe-app"></div>
+  <div id="globe-info"></div>
+  <script type="module">
+    // globe.js inlined，数据格式应包含 country, lat, lon, population_wan, density_wan_per_km2
+    const DATA_URL = '/public/data/merged_filtered.json';
+
+    main();
+    async function main() {
+      const container = document.getElementById('globe-app');
+      container.innerHTML = "";
+
+      // Three.js初始化
+      const width = container.offsetWidth;
+      const height = container.offsetHeight;
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(width, height);
+      container.appendChild(renderer.domElement);
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x0B1F33);
+      const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 1000);
+      camera.position.set(0, 0, 14);
+
+      // 控制器
+      const controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.07;
+      controls.minDistance = 8;
+      controls.maxDistance = 24;
+
+      // 光照
+      scene.add(new THREE.AmbientLight(0xffffff, 0.78));
+      const dirLight = new THREE.DirectionalLight(0xf7b267, 0.62);
+      dirLight.position.set(6, 8, 16); scene.add(dirLight);
+
+      // 地球球体
+      const globeGeometry = new THREE.SphereGeometry(5, 64, 64);
+      const globeMaterial = new THREE.MeshPhongMaterial({
+        color: 0x123456, shininess: 23,
+        specular: 0xF7B267,
+        transparent: true, opacity: 0.98,
+      });
+      const globeMesh = new THREE.Mesh(globeGeometry, globeMaterial);
+      scene.add(globeMesh);
+
+      // 加载数据
+      let data;
+      try {
+        data = await fetch(DATA_URL).then(r => r.json());
+      } catch (e) {
+        container.innerHTML = "<div style='color:#F7B267;font-size:18px;padding:20px;'>数据加载失败，缺少 merged_filtered.json</div>";
+        return;
+      }
+
+      // 柱状图参数
+      const popExtent = data ? [Math.min(...data.map(d=>d.population_wan)), Math.max(...data.map(d=>d.population_wan))] : [1,10000];
+      const densExtent = data ? [Math.min(...data.map(d=>d.density_wan_per_km2)), Math.max(...data.map(d=>d.density_wan_per_km2))] : [0.001,0.1];
+
+      // 柱高比例尺
+      function getHeight(pop) {
+        const minH = 0.45, maxH = 2.9;
+        return minH + (maxH-minH) * (pop-popExtent[0])/(popExtent[1]-popExtent[0]);
+      }
+      // 柱色比例尺（人口密度）
+      function getColor(density) {
+        // 低密度#123456，高密度#F7B267
+        const t = Math.max(0, Math.min(1, (density-densExtent[0])/(densExtent[1]-densExtent[0])));
+        // RGB插值
+        const rgb1 = [18,52,86], rgb2 = [247,178,103];
+        const rgb = rgb1.map((c,i)=>Math.round(c + (rgb2[i]-c)*t));
+        return `rgb(${rgb.join(",")})`;
+      }
+
+      // 绘制城市柱
+      const barGroup = new THREE.Group();
+      data.forEach((d,i) => {
+        // 经纬度转球面坐标
+        const phi = (90 - d.lat) * Math.PI / 180;
+        const theta = (180 + d.lon) * Math.PI / 180;
+        const r = 5.05;
+        const x = r * Math.sin(phi) * Math.cos(theta);
+        const y = r * Math.cos(phi);
+        const z = r * Math.sin(phi) * Math.sin(theta);
+
+        // 柱高
+        const h = getHeight(d.population_wan);
+        const barGeo = new THREE.CylinderGeometry(0.11, 0.11, h, 16);
+        const barMat = new THREE.MeshPhongMaterial({
+          color: new THREE.Color(getColor(d.density_wan_per_km2)),
+          shininess: 20,
+          opacity: 0.9,
+          transparent: true
+        });
+        const bar = new THREE.Mesh(barGeo, barMat);
+        bar.position.set(x, y, z);
+        // 柱底朝地球，顶部指外
+        bar.lookAt(0,0,0);
+        bar.rotateX(Math.PI/2);
+        bar.position.x += x * (h/2)/r;
+        bar.position.y += y * (h/2)/r;
+        bar.position.z += z * (h/2)/r;
+        bar.userData = d; // 绑定数据用于交互
+        barGroup.add(bar);
+      });
+      scene.add(barGroup);
+
+      // 交互：点击柱显示信息
+      const infoDiv = document.getElementById("globe-info");
+      renderer.domElement.addEventListener("pointerdown", function(event) {
+        const mouse = {
+          x: (event.offsetX / width)*2 - 1,
+          y: -((event.offsetY / height)*2 - 1)
+        };
+        const raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(barGroup.children);
+        if (intersects.length > 0) {
+          const d = intersects[0].object.userData;
+          infoDiv.textContent = `${d.country} | 人口:${d.population_wan}万 | 密度:${d.density_wan_per_km2.toFixed(4)}万/km²`;
+          infoDiv.style.opacity = 1;
+          setTimeout(()=>infoDiv.style.opacity=0, 2200);
+        }
+      });
+
+      // 渲染循环
+      function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+      }
+      animate();
+    }
+  </script>
+</body>
+</html>

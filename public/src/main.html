@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>数据可视化作品集入口页</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      background: #0B1F33;
+      color: #fff;
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .title {
+      color: #F7B267;
+      font-size: 2em;
+      margin-top: 44px;
+      margin-bottom: 18px;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+    .subtitle {
+      color: #fff;
+      font-size: 1.1em;
+      text-align: center;
+      margin-bottom: 22px;
+      opacity: 0.85;
+    }
+    .nav-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      justify-content: center;
+      margin-bottom: 38px;
+      margin-top: 10px;
+    }
+    .nav-item {
+      background: #123456;
+      color: #F7B267;
+      border-radius: 9px;
+      padding: 18px 34px;
+      font-size: 1.2em;
+      font-weight: bold;
+      text-decoration: none;
+      box-shadow: 0 2px 8px #0003;
+      border: none;
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s;
+      outline: none;
+      letter-spacing: 1px;
+      text-align: center;
+      min-width: 140px;
+    }
+    .nav-item:hover {
+      background: #F7B267;
+      color: #123456;
+    }
+    .preview-frame {
+      width: 960px;
+      height: 560px;
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 2px 16px #0005;
+      background: #fff;
+      margin-bottom: 24px;
+      display: none;
+    }
+    @media (max-width:1024px) {
+      .preview-frame { width: 99vw; height: 56vw; min-height: 340px;}
+    }
+    @media (max-width:700px) {
+      .nav-list { flex-direction: column; gap: 12px; }
+      .preview-frame { width: 99vw; height: 340px;}
+    }
+    .footer {
+      color: #fff;
+      font-size: 15px;
+      margin-bottom: 12px;
+      opacity: 0.7;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="title">数据可视化作品集入口</div>
+  <div class="subtitle">点击导航按钮预览各类可视化页面</div>
+  <div class="nav-list" id="nav-list">
+    <a class="nav-item" href="globe.html" target="preview-frame">3D地球柱状图</a>
+    <a class="nav-item" href="bubbleMap.html" target="preview-frame">气泡地图</a>
+    <a class="nav-item" href="hexbin.html" target="preview-frame">蜂巢热力图</a>
+    <a class="nav-item" href="treemap.html" target="preview-frame">树图</a>
+    <a class="nav-item" href="scatterMatrix.html" target="preview-frame">散点矩阵</a>
+    <a class="nav-item" href="rosePie.html" target="preview-frame">玫瑰图</a>
+    <a class="nav-item" href="parallel.html" target="preview-frame">平行坐标</a>
+    <a class="nav-item" href="river.html" target="preview-frame">流河图</a>
+    <a class="nav-item" href="signature.html" target="preview-frame">SVG签名</a>
+    <a class="nav-item" href="style.html" target="preview-frame">主题色样式</a>
+  </div>
+  <iframe class="preview-frame" id="preview-frame" name="preview-frame" src="" allowfullscreen></iframe>
+  <div class="footer">
+    Powered by Donz Hosted Cloud | <span style="color:#F7B267;">yangdongstation</span>
+  </div>
+  <script>
+    // 单页导航与预览
+    const navList = document.getElementById('nav-list');
+    const frame = document.getElementById('preview-frame');
+    navList.querySelectorAll('.nav-item').forEach(a => {
+      a.addEventListener('click', function(e) {
+        e.preventDefault();
+        frame.src = this.getAttribute('href');
+        frame.style.display = "block";
+        window.scrollTo({ top: frame.offsetTop - 40, behavior: "smooth" });
+      });
+    });
+  </script>
+</body>
+</html>

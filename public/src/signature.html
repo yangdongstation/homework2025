@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>SVG 签名（Powered by Donz Hosted Cloud）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      background: #0B1F33;
+      color: #fff;
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .title {
+      color: #F7B267;
+      font-size: 1.7em;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+    .subtitle {
+      color: #fff;
+      font-size: 1.1em;
+      text-align: center;
+      margin-bottom: 16px;
+      opacity: 0.8;
+    }
+    #signature-svg {
+      margin: 0 auto 16px auto;
+      display: block;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px #0003;
+      max-width: 580px;
+      width: 100%;
+      height: 160px;
+    }
+    .powered {
+      color: #F7B267;
+      font-size: 16px;
+      margin-top: 4px;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="title">SVG 手写签名 Demo</div>
+  <div class="subtitle">Powered by Donz Hosted Cloud</div>
+  <svg id="signature-svg" width="480" height="120" viewBox="0 0 480 120">
+    <!-- 签名路径（可按需替换） -->
+    <path
+      d="M40,80 Q60,20 120,60 Q140,100 180,60 Q200,20 240,60 Q260,100 320,60 Q340,20 380,80"
+      stroke="#F7B267"
+      stroke-width="6"
+      fill="none"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      style="filter: drop-shadow(0 2px 4px #0B1F33AA);"
+    />
+    <!-- 签名文字 -->
+    <text x="30" y="110" font-size="32" fill="#123456" font-family="Brush Script MT, cursive, sans-serif">Donz</text>
+  </svg>
+  <div class="powered">Powered by Donz Hosted Cloud</div>
+</body>
+</html>
