@@ -39,11 +39,30 @@
       margin-bottom: 8px;
       opacity: 0.8;
     }
+    .legend {
+      width: 960px;
+      margin: 0 auto 10px auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #fff;
+      justify-content: flex-end;
+    }
+    .legend-bar {
+      width: 180px;
+      height: 12px;
+      background: linear-gradient(to right, #123456, #F7B267);
+      border-radius: 6px;
+      margin-right: 8px;
+      display: inline-block;
+    }
   </style>
 </head>
 <body>
   <div class="title">Hexbin（蜂巢热力图）</div>
-  <div class="subtitle">国家分布，蜂窝大小/颜色按人口密度渲染</div>
+  <div class="subtitle">国家分布，蜂窝颜色按人口密度渲染</div>
+  <div class="legend" id="legend-bar"></div>
   <div id="hexbin-app"></div>
   <script type="module">
     // hexbin.js inlined
@@ -83,6 +102,10 @@
         return;
       }
 
+      // 底图颜色
+      const landColor = "#123456";
+      const accentColor = "#F7B267";
+
       // 绘制底图
       const land = topojson.feature(world, world.objects.countries);
       svg.append("g")
@@ -90,9 +113,9 @@
         .data(land.features)
         .enter()
         .append("path")
-        .attr("fill", "#123456")
+        .attr("fill", landColor)
         .attr("stroke", "#fff")
-        .attr("stroke-width", 0.2)
+        .attr("stroke-width", 0.4)
         .attr("d", path);
 
       // 建立国家名到地理特征的映射
@@ -121,10 +144,11 @@
         .radius(16)
         .extent([[0, 0], [width, height]]);
 
-      // 蜂窝密度：用人口密度（density_wan_per_km2）决定颜色
+      // 颜色范围：底色到强调色
       const densExtent = d3.extent(points, d => d.density_wan_per_km2);
-      const colorScale = d3.scaleSequential(d3.interpolateYlOrRd)
-        .domain([densExtent[0], densExtent[1]]);
+      const colorScale = d3.scaleLinear()
+        .domain([densExtent[0], densExtent[1]])
+        .range([landColor, accentColor]);
 
       // 聚合
       const bins = hexbin(points);
@@ -141,19 +165,22 @@
           const avgDensity = d3.mean(d, p => p.density_wan_per_km2);
           return colorScale(avgDensity);
         })
-        .attr("fill-opacity", 0.8)
+        .attr("fill-opacity", 0.85)
         .attr("stroke", "#fff")
-        .attr("stroke-width", 0.6)
+        .attr("stroke-width", 0.8)
         .on("mouseover", function(e, d) {
-          d3.select(this).attr("fill", "#F7B267").attr("fill-opacity", 1);
+          d3.select(this).attr("fill", accentColor).attr("fill-opacity", 1);
           showTooltip(svg, d, e.pageX, e.pageY);
         })
         .on("mouseout", function(e, d) {
           d3.select(this)
             .attr("fill", colorScale(d3.mean(d, p => p.density_wan_per_km2)))
-            .attr("fill-opacity", 0.8);
+            .attr("fill-opacity", 0.85);
           hideTooltip(svg);
         });
+
+      // 渲染颜色图例
+      renderLegend(densExtent, landColor, accentColor);
 
       // Tooltip
       function showTooltip(svg, d, x, y) {
@@ -171,6 +198,17 @@
       }
       function hideTooltip(svg) {
         svg.select("#hexbin-tooltip").remove();
+      }
+
+      // 颜色图例渲染
+      function renderLegend(ext, color1, color2) {
+        const legend = document.getElementById("legend-bar");
+        legend.innerHTML = `
+          <span>人口密度</span>
+          <span class="legend-bar" style="background:linear-gradient(to right,${color1},${color2});"></span>
+          <span>${ext[0].toFixed(4)} 万/km²</span>
+          <span>${ext[1].toFixed(4)} 万/km²</span>
+        `;
       }
     }
   </script>
