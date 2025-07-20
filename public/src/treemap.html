@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>Treemap | 国家面积与人口密度可视化</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- D3.js v7 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+  <style>
+    body {
+      background: #0B1F33;
+      color: #fff;
+      font-family: "Helvetica Neue", Arial, sans-serif;
+    }
+    #treemap-app {
+      margin: 24px auto;
+      width: 960px;
+      min-height: 540px;
+      box-shadow: 0 2px 12px #0003;
+      background: #0B1F33;
+      border-radius: 8px;
+      padding: 8px;
+    }
+    .title {
+      color: #F7B267;
+      font-size: 1.7em;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+    .subtitle {
+      color: #fff;
+      font-size: 1.1em;
+      text-align: center;
+      margin-bottom: 8px;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <div class="title">Treemap（国家面积与人口密度）</div>
+  <div class="subtitle">矩形大小代表面积，颜色代表人口密度</div>
+  <div id="treemap-app"></div>
+  <script type="module">
+    // treemap.js inlined
+    const DATA_URL = '/public/data/merged_filtered.json';
+
+    main();
+    async function main() {
+      const container = document.getElementById('treemap-app');
+      container.innerHTML = "";
+
+      const width = 960;
+      const height = 540;
+      const mainColor = "#0B1F33";
+      const accentColor = "#F7B267";
+
+      // 创建 SVG
+      const svg = d3.select(container)
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .style("background", mainColor);
+
+      // 加载数据
+      let data;
+      try {
+        data = await d3.json(DATA_URL);
+      } catch (e) {
+        container.innerHTML = "<div style='color:#F7B267;font-size:18px;padding:20px;'>数据加载失败，缺少 merged_filtered.json</div>";
+        return;
+      }
+
+      // 转为 D3 层级结构：全部归为 root
+      const root = d3.hierarchy({
+        name: "World",
+        children: data
+      })
+        .sum(d => d.area) // 按面积决定每块大小
+        .sort((a, b) => b.value - a.value);
+
+      // 创建 Treemap
+      d3.treemap()
+        .size([width, height])
+        .paddingOuter(4)
+        .paddingInner(2)
+        (root);
+
+      // 颜色比例尺：按人口密度渲染
+      const densExtent = d3.extent(data, d => d.density_wan_per_km2);
+      const colorScale = d3.scaleSequential(d3.interpolateYlOrRd)
+        .domain([densExtent[0], densExtent[1]]);
+
+      // 绘制矩形
+      const nodes = svg.selectAll("g")
+        .data(root.leaves())
+        .enter()
+        .append("g")
+        .attr("transform", d => `translate(${d.x0},${d.y0})`);
+
+      nodes.append("rect")
+        .attr("width", d => d.x1 - d.x0)
+        .attr("height", d => d.y1 - d.y0)
+        .attr("fill", d => colorScale(d.data.density_wan_per_km2))
+        .attr("stroke", "#fff")
+        .attr("stroke-width", 0.5)
+        .on("mouseover", function(e, d) {
+          d3.select(this).attr("fill", accentColor);
+          showTooltip(svg, d, e.pageX, e.pageY);
+        })
+        .on("mouseout", function(e, d) {
+          d3.select(this).attr("fill", colorScale(d.data.density_wan_per_km2));
+          hideTooltip(svg);
+        });
+
+      // 绘制国家名
+      nodes.append("text")
+        .attr("x", 4)
+        .attr("y", 22)
+        .attr("font-size", 12)
+        .attr("fill", "#fff")
+        .attr("pointer-events", "none")
+        .text(d => d.data.country)
+        .attr("opacity", d => (d.x1 - d.x0) > 60 && (d.y1 - d.y0) > 22 ? 1 : 0);
+
+      // Tooltip
+      function showTooltip(svg, d, x, y) {
+        hideTooltip(svg);
+        svg.append("text")
+          .attr("id", "treemap-tooltip")
+          .attr("x", x - 120)
+          .attr("y", y - 60)
+          .attr("fill", "#fff")
+          .attr("font-size", 15)
+          .attr("font-weight", "bold")
+          .text(`${d.data.country} 人口:${d.data.population_wan}万 面积:${d.data.area}km² 密度:${d.data.density_wan_per_km2.toFixed(4)}万/km²`);
+      }
+      function hideTooltip(svg) {
+        svg.select("#treemap-tooltip").remove();
+      }
+    }
+  </script>
+</body>
+</html>
