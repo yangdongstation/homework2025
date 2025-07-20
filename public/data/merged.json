@@ -1,0 +1,1238 @@
+[
+  {
+    "country": "Afghanistan",
+    "population": 40754388,
+    "area": 652230.0,
+    "perCapitaArea": 0.016003920853872224
+  },
+  {
+    "country": "Albania",
+    "population": 2866374,
+    "area": 28748.0,
+    "perCapitaArea": 0.010029396024384815
+  },
+  {
+    "country": "Algeria",
+    "population": 45350148,
+    "area": 2381741.0,
+    "perCapitaArea": 0.05251892452478876
+  },
+  {
+    "country": "Andorra",
+    "population": 77463,
+    "area": 468.0,
+    "perCapitaArea": 0.00604159405135355
+  },
+  {
+    "country": "Angola",
+    "population": 35027343,
+    "area": 1246700.0,
+    "perCapitaArea": 0.035592194360845465
+  },
+  {
+    "country": "Anguilla",
+    "population": 15230,
+    "area": 91.0,
+    "perCapitaArea": 0.005975049244911359
+  },
+  {
+    "country": "Antigua and Barbuda",
+    "population": 99509,
+    "area": 442.0,
+    "perCapitaArea": 0.00444180928358239
+  },
+  {
+    "country": "Argentina",
+    "population": 46010234,
+    "area": 2780400.0,
+    "perCapitaArea": 0.060430033892024976
+  },
+  {
+    "country": "Armenia",
+    "population": 2971966,
+    "area": 29743.0,
+    "perCapitaArea": 0.010007853387286396
+  },
+  {
+    "country": "Aruba",
+    "population": 107609,
+    "area": 180.0,
+    "perCapitaArea": 0.0016727225417948312
+  },
+  {
+    "country": "Australia",
+    "population": 26068792,
+    "area": 7692024.0,
+    "perCapitaArea": 0.2950663766851951
+  },
+  {
+    "country": "Austria",
+    "population": 9066710,
+    "area": 83871.0,
+    "perCapitaArea": 0.009250433729544675
+  },
+  {
+    "country": "Azerbaijan",
+    "population": 10300205,
+    "area": 86600.0,
+    "perCapitaArea": 0.008407599654569982
+  },
+  {
+    "country": "Bahamas",
+    "population": 400516,
+    "area": 13943.0,
+    "perCapitaArea": 0.03481259175663394
+  },
+  {
+    "country": "Bahrain",
+    "population": 1783983,
+    "area": 765.0,
+    "perCapitaArea": 0.00042881574544152045
+  },
+  {
+    "country": "Bangladesh",
+    "population": 167885689,
+    "area": 147570.0,
+    "perCapitaArea": 0.0008789909424620463
+  },
+  {
+    "country": "Barbados",
+    "population": 288023,
+    "area": 430.0,
+    "perCapitaArea": 0.0014929363280015832
+  },
+  {
+    "country": "Belarus",
+    "population": 9432800,
+    "area": 207600.0,
+    "perCapitaArea": 0.022008311423967433
+  },
+  {
+    "country": "Belgium",
+    "population": 11668278,
+    "area": 30528.0,
+    "perCapitaArea": 0.0026163243625151886
+  },
+  {
+    "country": "Belize",
+    "population": 412190,
+    "area": 22966.0,
+    "perCapitaArea": 0.05571702370266139
+  },
+  {
+    "country": "Benin",
+    "population": 12784726,
+    "area": 112622.0,
+    "perCapitaArea": 0.00880910549041098
+  },
+  {
+    "country": "Bermuda",
+    "population": 61939,
+    "area": 54.0,
+    "perCapitaArea": 0.0008718255057395179
+  },
+  {
+    "country": "Bhutan",
+    "population": 787941,
+    "area": 38394.0,
+    "perCapitaArea": 0.04872699859507247
+  },
+  {
+    "country": "Bolivia",
+    "population": 11992656,
+    "area": 1098581.0,
+    "perCapitaArea": 0.09160447860757451
+  },
+  {
+    "country": "Botswana",
+    "population": 2441162,
+    "area": 582000.0,
+    "perCapitaArea": 0.23841105178599373
+  },
+  {
+    "country": "Brazil",
+    "population": 215353593,
+    "area": 8515767.0,
+    "perCapitaArea": 0.03954318514667178
+  },
+  {
+    "country": "British Virgin Islands",
+    "population": 30596,
+    "area": 151.0,
+    "perCapitaArea": 0.004935285658255981
+  },
+  {
+    "country": "Brunei",
+    "population": 445431,
+    "area": 5765.0,
+    "perCapitaArea": 0.012942520839366815
+  },
+  {
+    "country": "Bulgaria",
+    "population": 6844597,
+    "area": 110879.0,
+    "perCapitaArea": 0.01619949282623944
+  },
+  {
+    "country": "Burkina Faso",
+    "population": 22102838,
+    "area": 272967.0,
+    "perCapitaArea": 0.012349862040340703
+  },
+  {
+    "country": "Burundi",
+    "population": 12624840,
+    "area": 27834.0,
+    "perCapitaArea": 0.0022047012080945185
+  },
+  {
+    "country": "Cambodia",
+    "population": 17168639,
+    "area": 181035.0,
+    "perCapitaArea": 0.0105445166620371
+  },
+  {
+    "country": "Cameroon",
+    "population": 27911548,
+    "area": 475442.0,
+    "perCapitaArea": 0.017033881460103897
+  },
+  {
+    "country": "Canada",
+    "population": 38388419,
+    "area": 9984670.0,
+    "perCapitaArea": 0.26009588985678206
+  },
+  {
+    "country": "Caribbean Netherlands",
+    "population": 26647,
+    "area": 328.0,
+    "perCapitaArea": 0.012309077944984426
+  },
+  {
+    "country": "Cayman Islands",
+    "population": 67277,
+    "area": 264.0,
+    "perCapitaArea": 0.003924075092527907
+  },
+  {
+    "country": "Central African Republic",
+    "population": 5016678,
+    "area": 622984.0,
+    "perCapitaArea": 0.12418257659750137
+  },
+  {
+    "country": "Chad",
+    "population": 17413580,
+    "area": 1284000.0,
+    "perCapitaArea": 0.07373555581333649
+  },
+  {
+    "country": "Chile",
+    "population": 19250195,
+    "area": 756102.0,
+    "perCapitaArea": 0.03927762809675434
+  },
+  {
+    "country": "China",
+    "population": 1448471400,
+    "area": 9706961.0,
+    "perCapitaArea": 0.00670152065135701
+  },
+  {
+    "country": "Colombia",
+    "population": 51512762,
+    "area": 1141748.0,
+    "perCapitaArea": 0.0221643716172703
+  },
+  {
+    "country": "Comoros",
+    "population": 907419,
+    "area": 1862.0,
+    "perCapitaArea": 0.0020519737849879712
+  },
+  {
+    "country": "Cook Islands",
+    "population": 17571,
+    "area": 236.0,
+    "perCapitaArea": 0.013431221899721131
+  },
+  {
+    "country": "Costa Rica",
+    "population": 5182354,
+    "area": 51100.0,
+    "perCapitaArea": 0.009860383910477747
+  },
+  {
+    "country": "Croatia",
+    "population": 4059286,
+    "area": 56594.0,
+    "perCapitaArea": 0.013941860711465021
+  },
+  {
+    "country": "Cuba",
+    "population": 11305652,
+    "area": 109884.0,
+    "perCapitaArea": 0.009719386374178154
+  },
+  {
+    "country": "Curaçao",
+    "population": 165529,
+    "area": 444.0,
+    "perCapitaArea": 0.0026823094442665636
+  },
+  {
+    "country": "Cyprus",
+    "population": 1223387,
+    "area": 9251.0,
+    "perCapitaArea": 0.007561793610689013
+  },
+  {
+    "country": "Czechia",
+    "population": 10736784,
+    "area": 78865.0,
+    "perCapitaArea": 0.0073453093589290796
+  },
+  {
+    "country": "Denmark",
+    "population": 5834950,
+    "area": 43094.0,
+    "perCapitaArea": 0.007385496019674548
+  },
+  {
+    "country": "Djibouti",
+    "population": 1016097,
+    "area": 23200.0,
+    "perCapitaArea": 0.022832465798048807
+  },
+  {
+    "country": "Dominica",
+    "population": 72344,
+    "area": 751.0,
+    "perCapitaArea": 0.010380957646798628
+  },
+  {
+    "country": "Dominican Republic",
+    "population": 11056370,
+    "area": 48671.0,
+    "perCapitaArea": 0.00440207771628482
+  },
+  {
+    "country": "Ecuador",
+    "population": 18113361,
+    "area": 276841.0,
+    "perCapitaArea": 0.015283800725884058
+  },
+  {
+    "country": "Egypt",
+    "population": 106156692,
+    "area": 1002450.0,
+    "perCapitaArea": 0.009443116407583612
+  },
+  {
+    "country": "El Salvador",
+    "population": 6550389,
+    "area": 21041.0,
+    "perCapitaArea": 0.0032121756433091224
+  },
+  {
+    "country": "Equatorial Guinea",
+    "population": 1496662,
+    "area": 28051.0,
+    "perCapitaArea": 0.018742374697827566
+  },
+  {
+    "country": "Eritrea",
+    "population": 3662244,
+    "area": 117600.0,
+    "perCapitaArea": 0.03211145953136929
+  },
+  {
+    "country": "Estonia",
+    "population": 1321910,
+    "area": 45227.0,
+    "perCapitaArea": 0.034213373073809866
+  },
+  {
+    "country": "Ethiopia",
+    "population": 120812698,
+    "area": 1104300.0,
+    "perCapitaArea": 0.009140595469525893
+  },
+  {
+    "country": "Faroe Islands",
+    "population": 49233,
+    "area": 1393.0,
+    "perCapitaArea": 0.02829403042674629
+  },
+  {
+    "country": "Fiji",
+    "population": 909466,
+    "area": 18272.0,
+    "perCapitaArea": 0.02009091049033169
+  },
+  {
+    "country": "Finland",
+    "population": 5554960,
+    "area": 338424.0,
+    "perCapitaArea": 0.06092285092961965
+  },
+  {
+    "country": "France",
+    "population": 65584518,
+    "area": 551695.0,
+    "perCapitaArea": 0.008411970032317688
+  },
+  {
+    "country": "French Guiana",
+    "population": 314169,
+    "area": 83534.0,
+    "perCapitaArea": 0.2658887414098781
+  },
+  {
+    "country": "French Polynesia",
+    "population": 284164,
+    "area": 4167.0,
+    "perCapitaArea": 0.014664067228783379
+  },
+  {
+    "country": "Gabon",
+    "population": 2331533,
+    "area": 267668.0,
+    "perCapitaArea": 0.11480343619412635
+  },
+  {
+    "country": "Gambia",
+    "population": 2558482,
+    "area": 10689.0,
+    "perCapitaArea": 0.004177867970147924
+  },
+  {
+    "country": "Georgia",
+    "population": 3968738,
+    "area": 69700.0,
+    "perCapitaArea": 0.017562257826039412
+  },
+  {
+    "country": "Germany",
+    "population": 83883596,
+    "area": 357114.0,
+    "perCapitaArea": 0.00425725668699277
+  },
+  {
+    "country": "Ghana",
+    "population": 32395450,
+    "area": 238533.0,
+    "perCapitaArea": 0.007363163654155136
+  },
+  {
+    "country": "Gibraltar",
+    "population": 33704,
+    "area": 6.0,
+    "perCapitaArea": 0.00017802041300735816
+  },
+  {
+    "country": "Greece",
+    "population": 10316637,
+    "area": 131990.0,
+    "perCapitaArea": 0.012793897856442948
+  },
+  {
+    "country": "Greenland",
+    "population": 56973,
+    "area": 2166086.0,
+    "perCapitaArea": 38.019518017306446
+  },
+  {
+    "country": "Grenada",
+    "population": 113475,
+    "area": 344.0,
+    "perCapitaArea": 0.003031504736726151
+  },
+  {
+    "country": "Guadeloupe",
+    "population": 399794,
+    "area": 1628.0,
+    "perCapitaArea": 0.004072097130021961
+  },
+  {
+    "country": "Guatemala",
+    "population": 18584039,
+    "area": 108889.0,
+    "perCapitaArea": 0.0058592752630362
+  },
+  {
+    "country": "Guinea",
+    "population": 13865691,
+    "area": 245857.0,
+    "perCapitaArea": 0.017731319701268403
+  },
+  {
+    "country": "Guinea-Bissau",
+    "population": 2063367,
+    "area": 36125.0,
+    "perCapitaArea": 0.017507791876093783
+  },
+  {
+    "country": "Guyana",
+    "population": 794045,
+    "area": 214969.0,
+    "perCapitaArea": 0.2707264701622704
+  },
+  {
+    "country": "Haiti",
+    "population": 11680283,
+    "area": 27750.0,
+    "perCapitaArea": 0.002375798600085289
+  },
+  {
+    "country": "Honduras",
+    "population": 10221247,
+    "area": 112492.0,
+    "perCapitaArea": 0.011005702141822813
+  },
+  {
+    "country": "Hong Kong",
+    "population": 7604299,
+    "area": 1104.0,
+    "perCapitaArea": 0.0001451810350960687
+  },
+  {
+    "country": "Hungary",
+    "population": 9606259,
+    "area": 93028.0,
+    "perCapitaArea": 0.009684102833371452
+  },
+  {
+    "country": "Iceland",
+    "population": 345393,
+    "area": 103000.0,
+    "perCapitaArea": 0.2982110233849557
+  },
+  {
+    "country": "India",
+    "population": 1406631776,
+    "area": 3287590.0,
+    "perCapitaArea": 0.0023372072607010406
+  },
+  {
+    "country": "Indonesia",
+    "population": 279134505,
+    "area": 1904569.0,
+    "perCapitaArea": 0.006823122780897331
+  },
+  {
+    "country": "Iran",
+    "population": 86022837,
+    "area": 1648195.0,
+    "perCapitaArea": 0.019159970276265127
+  },
+  {
+    "country": "Iraq",
+    "population": 42164965,
+    "area": 438317.0,
+    "perCapitaArea": 0.0103952890747093
+  },
+  {
+    "country": "Ireland",
+    "population": 5020199,
+    "area": 70273.0,
+    "perCapitaArea": 0.013998050674883605
+  },
+  {
+    "country": "Isle of Man",
+    "population": 85732,
+    "area": 572.0,
+    "perCapitaArea": 0.006671954462744366
+  },
+  {
+    "country": "Israel",
+    "population": 9326000,
+    "area": 20770.0,
+    "perCapitaArea": 0.002227107012652799
+  },
+  {
+    "country": "Italy",
+    "population": 60262770,
+    "area": 301336.0,
+    "perCapitaArea": 0.0050003675569509996
+  },
+  {
+    "country": "Jamaica",
+    "population": 2985094,
+    "area": 10991.0,
+    "perCapitaArea": 0.003681961104072435
+  },
+  {
+    "country": "Japan",
+    "population": 125584838,
+    "area": 377930.0,
+    "perCapitaArea": 0.0030093600948866137
+  },
+  {
+    "country": "Jordan",
+    "population": 10300869,
+    "area": 89342.0,
+    "perCapitaArea": 0.008673248829783197
+  },
+  {
+    "country": "Kazakhstan",
+    "population": 19205043,
+    "area": 2724900.0,
+    "perCapitaArea": 0.14188460812089826
+  },
+  {
+    "country": "Kenya",
+    "population": 56215221,
+    "area": 580367.0,
+    "perCapitaArea": 0.01032401882756985
+  },
+  {
+    "country": "Kiribati",
+    "population": 123419,
+    "area": 811.0,
+    "perCapitaArea": 0.006571111417204806
+  },
+  {
+    "country": "Kuwait",
+    "population": 4380326,
+    "area": 17818.0,
+    "perCapitaArea": 0.004067733771413361
+  },
+  {
+    "country": "Kyrgyzstan",
+    "population": 6728271,
+    "area": 199951.0,
+    "perCapitaArea": 0.02971803603035609
+  },
+  {
+    "country": "Latvia",
+    "population": 1848837,
+    "area": 64559.0,
+    "perCapitaArea": 0.03491870835557705
+  },
+  {
+    "country": "Lebanon",
+    "population": 6684849,
+    "area": 10452.0,
+    "perCapitaArea": 0.001563535690933333
+  },
+  {
+    "country": "Lesotho",
+    "population": 2175699,
+    "area": 30355.0,
+    "perCapitaArea": 0.013951838007003727
+  },
+  {
+    "country": "Liberia",
+    "population": 5305117,
+    "area": 111369.0,
+    "perCapitaArea": 0.020992750961006137
+  },
+  {
+    "country": "Liechtenstein",
+    "population": 38387,
+    "area": 160.0,
+    "perCapitaArea": 0.004168077734649751
+  },
+  {
+    "country": "Lithuania",
+    "population": 2661708,
+    "area": 65300.0,
+    "perCapitaArea": 0.024533119335404183
+  },
+  {
+    "country": "Luxembourg",
+    "population": 642371,
+    "area": 2586.0,
+    "perCapitaArea": 0.004025710998784192
+  },
+  {
+    "country": "Madagascar",
+    "population": 29178077,
+    "area": 587041.0,
+    "perCapitaArea": 0.020119249119810053
+  },
+  {
+    "country": "Malawi",
+    "population": 20180839,
+    "area": 118484.0,
+    "perCapitaArea": 0.005871113683628317
+  },
+  {
+    "country": "Malaysia",
+    "population": 33181072,
+    "area": 330803.0,
+    "perCapitaArea": 0.00996962967320646
+  },
+  {
+    "country": "Maldives",
+    "population": 540985,
+    "area": 300.0,
+    "perCapitaArea": 0.0005545440261744781
+  },
+  {
+    "country": "Mali",
+    "population": 21473764,
+    "area": 1240192.0,
+    "perCapitaArea": 0.05775382462059283
+  },
+  {
+    "country": "Malta",
+    "population": 444033,
+    "area": 316.0,
+    "perCapitaArea": 0.0007116588181509032
+  },
+  {
+    "country": "Marshall Islands",
+    "population": 60057,
+    "area": 181.0,
+    "perCapitaArea": 0.0030138035532910404
+  },
+  {
+    "country": "Martinique",
+    "population": 374087,
+    "area": 1128.0,
+    "perCapitaArea": 0.0030153413510760865
+  },
+  {
+    "country": "Mauritania",
+    "population": 4901981,
+    "area": 1030700.0,
+    "perCapitaArea": 0.2102619328797888
+  },
+  {
+    "country": "Mauritius",
+    "population": 1274727,
+    "area": 2040.0,
+    "perCapitaArea": 0.0016003426616051908
+  },
+  {
+    "country": "Mayotte",
+    "population": 286259,
+    "area": 374.0,
+    "perCapitaArea": 0.0013065091403239722
+  },
+  {
+    "country": "Mexico",
+    "population": 131562772,
+    "area": 1964375.0,
+    "perCapitaArea": 0.014931085520150031
+  },
+  {
+    "country": "Micronesia",
+    "population": 117489,
+    "area": 702.0,
+    "perCapitaArea": 0.005975027449378239
+  },
+  {
+    "country": "Moldova",
+    "population": 4013171,
+    "area": 33846.0,
+    "perCapitaArea": 0.00843372983608224
+  },
+  {
+    "country": "Monaco",
+    "population": 39783,
+    "area": 2.02,
+    "perCapitaArea": 5.077545685342986e-05
+  },
+  {
+    "country": "Mongolia",
+    "population": 3378078,
+    "area": 1564110.0,
+    "perCapitaArea": 0.463017727832217
+  },
+  {
+    "country": "Montenegro",
+    "population": 627950,
+    "area": 13812.0,
+    "perCapitaArea": 0.021995381797913847
+  },
+  {
+    "country": "Montserrat",
+    "population": 4965,
+    "area": 102.0,
+    "perCapitaArea": 0.02054380664652568
+  },
+  {
+    "country": "Morocco",
+    "population": 37772756,
+    "area": 446550.0,
+    "perCapitaArea": 0.011822012669660641
+  },
+  {
+    "country": "Mozambique",
+    "population": 33089461,
+    "area": 801590.0,
+    "perCapitaArea": 0.024224933733432527
+  },
+  {
+    "country": "Myanmar",
+    "population": 55227143,
+    "area": 676578.0,
+    "perCapitaArea": 0.012250823838560687
+  },
+  {
+    "country": "Namibia",
+    "population": 2633874,
+    "area": 825615.0,
+    "perCapitaArea": 0.3134603249813772
+  },
+  {
+    "country": "Nauru",
+    "population": 10903,
+    "area": 21.0,
+    "perCapitaArea": 0.0019260753920939191
+  },
+  {
+    "country": "Nepal",
+    "population": 30225582,
+    "area": 147181.0,
+    "perCapitaArea": 0.004869418229895457
+  },
+  {
+    "country": "Netherlands",
+    "population": 17211447,
+    "area": 41850.0,
+    "perCapitaArea": 0.002431521300910958
+  },
+  {
+    "country": "New Caledonia",
+    "population": 290915,
+    "area": 18575.0,
+    "perCapitaArea": 0.06385026554148118
+  },
+  {
+    "country": "New Zealand",
+    "population": 4898203,
+    "area": 270467.0,
+    "perCapitaArea": 0.055217597147362005
+  },
+  {
+    "country": "Nicaragua",
+    "population": 6779100,
+    "area": 130373.0,
+    "perCapitaArea": 0.019231608915637768
+  },
+  {
+    "country": "Niger",
+    "population": 26083660,
+    "area": 1267000.0,
+    "perCapitaArea": 0.048574471527385345
+  },
+  {
+    "country": "Nigeria",
+    "population": 216746934,
+    "area": 923768.0,
+    "perCapitaArea": 0.004261965707897856
+  },
+  {
+    "country": "Niue",
+    "population": 1622,
+    "area": 260.0,
+    "perCapitaArea": 0.16029593094944514
+  },
+  {
+    "country": "Norway",
+    "population": 5511370,
+    "area": 323802.0,
+    "perCapitaArea": 0.05875163525584383
+  },
+  {
+    "country": "Oman",
+    "population": 5323993,
+    "area": 309500.0,
+    "perCapitaArea": 0.05813305915315817
+  },
+  {
+    "country": "Pakistan",
+    "population": 229488994,
+    "area": 881912.0,
+    "perCapitaArea": 0.0038429381062169807
+  },
+  {
+    "country": "Palau",
+    "population": 18233,
+    "area": 459.0,
+    "perCapitaArea": 0.025174134810508418
+  },
+  {
+    "country": "Palestine",
+    "population": 5345541,
+    "area": 6220.0,
+    "perCapitaArea": 0.0011635866229442445
+  },
+  {
+    "country": "Panama",
+    "population": 4446964,
+    "area": 75417.0,
+    "perCapitaArea": 0.016959210823384224
+  },
+  {
+    "country": "Papua New Guinea",
+    "population": 9292169,
+    "area": 462840.0,
+    "perCapitaArea": 0.04980968383162209
+  },
+  {
+    "country": "Paraguay",
+    "population": 7305843,
+    "area": 406752.0,
+    "perCapitaArea": 0.05567488926329241
+  },
+  {
+    "country": "Peru",
+    "population": 33684208,
+    "area": 1285216.0,
+    "perCapitaArea": 0.038154852861613964
+  },
+  {
+    "country": "Philippines",
+    "population": 112508994,
+    "area": 342353.0,
+    "perCapitaArea": 0.0030428945085048047
+  },
+  {
+    "country": "Poland",
+    "population": 37739785,
+    "area": 312679.0,
+    "perCapitaArea": 0.008285129340296984
+  },
+  {
+    "country": "Portugal",
+    "population": 10140570,
+    "area": 92090.0,
+    "perCapitaArea": 0.009081343553666115
+  },
+  {
+    "country": "Qatar",
+    "population": 2979915,
+    "area": 11586.0,
+    "perCapitaArea": 0.003888030363282174
+  },
+  {
+    "country": "Romania",
+    "population": 19031335,
+    "area": 238391.0,
+    "perCapitaArea": 0.01252623633602162
+  },
+  {
+    "country": "Russia",
+    "population": 145805947,
+    "area": 17098242.0,
+    "perCapitaArea": 0.11726710982508827
+  },
+  {
+    "country": "Rwanda",
+    "population": 13600464,
+    "area": 26338.0,
+    "perCapitaArea": 0.001936551576475626
+  },
+  {
+    "country": "Réunion",
+    "population": 908061,
+    "area": 2511.0,
+    "perCapitaArea": 0.0027652327321622664
+  },
+  {
+    "country": "Saint Kitts and Nevis",
+    "population": 53871,
+    "area": 261.0,
+    "perCapitaArea": 0.0048449072784986355
+  },
+  {
+    "country": "Saint Lucia",
+    "population": 185113,
+    "area": 616.0,
+    "perCapitaArea": 0.0033276971363437467
+  },
+  {
+    "country": "Saint Martin",
+    "population": 39730,
+    "area": 53.0,
+    "perCapitaArea": 0.0013340045305814247
+  },
+  {
+    "country": "Saint Vincent and the Grenadines",
+    "population": 111551,
+    "area": 389.0,
+    "perCapitaArea": 0.0034871941981694473
+  },
+  {
+    "country": "Samoa",
+    "population": 202239,
+    "area": 2842.0,
+    "perCapitaArea": 0.01405268024466102
+  },
+  {
+    "country": "San Marino",
+    "population": 34085,
+    "area": 61.0,
+    "perCapitaArea": 0.0017896435382132904
+  },
+  {
+    "country": "Saudi Arabia",
+    "population": 35844909,
+    "area": 2149690.0,
+    "perCapitaArea": 0.059971975378707194
+  },
+  {
+    "country": "Senegal",
+    "population": 17653671,
+    "area": 196722.0,
+    "perCapitaArea": 0.011143404677701313
+  },
+  {
+    "country": "Serbia",
+    "population": 8653016,
+    "area": 88361.0,
+    "perCapitaArea": 0.010211584030354272
+  },
+  {
+    "country": "Seychelles",
+    "population": 99426,
+    "area": 452.0,
+    "perCapitaArea": 0.0045460945829058795
+  },
+  {
+    "country": "Sierra Leone",
+    "population": 8306436,
+    "area": 71740.0,
+    "perCapitaArea": 0.008636676427772392
+  },
+  {
+    "country": "Singapore",
+    "population": 5943546,
+    "area": 710.0,
+    "perCapitaArea": 0.00011945730713617763
+  },
+  {
+    "country": "Sint Maarten",
+    "population": 43966,
+    "area": 34.0,
+    "perCapitaArea": 0.0007733248419233043
+  },
+  {
+    "country": "Slovakia",
+    "population": 5460193,
+    "area": 49037.0,
+    "perCapitaArea": 0.008980818077309721
+  },
+  {
+    "country": "Slovenia",
+    "population": 2078034,
+    "area": 20273.0,
+    "perCapitaArea": 0.009755855775218307
+  },
+  {
+    "country": "Solomon Islands",
+    "population": 721159,
+    "area": 28896.0,
+    "perCapitaArea": 0.04006883364140224
+  },
+  {
+    "country": "Somalia",
+    "population": 16841795,
+    "area": 637657.0,
+    "perCapitaArea": 0.03786158185632826
+  },
+  {
+    "country": "South Africa",
+    "population": 60756135,
+    "area": 1221037.0,
+    "perCapitaArea": 0.020097344901876986
+  },
+  {
+    "country": "South Sudan",
+    "population": 11618511,
+    "area": 619745.0,
+    "perCapitaArea": 0.05334117254784197
+  },
+  {
+    "country": "Spain",
+    "population": 46719142,
+    "area": 505992.0,
+    "perCapitaArea": 0.010830507118474051
+  },
+  {
+    "country": "Sri Lanka",
+    "population": 21575842,
+    "area": 65610.0,
+    "perCapitaArea": 0.003040901022541785
+  },
+  {
+    "country": "Sudan",
+    "population": 45992020,
+    "area": 1886068.0,
+    "perCapitaArea": 0.04100859236015291
+  },
+  {
+    "country": "Suriname",
+    "population": 596831,
+    "area": 163820.0,
+    "perCapitaArea": 0.2744830613691313
+  },
+  {
+    "country": "Sweden",
+    "population": 10218971,
+    "area": 450295.0,
+    "perCapitaArea": 0.044064612767763016
+  },
+  {
+    "country": "Switzerland",
+    "population": 8773637,
+    "area": 41284.0,
+    "perCapitaArea": 0.004705460232740425
+  },
+  {
+    "country": "Taiwan",
+    "population": 23888595,
+    "area": 36193.0,
+    "perCapitaArea": 0.001515074452892688
+  },
+  {
+    "country": "Tajikistan",
+    "population": 9957464,
+    "area": 143100.0,
+    "perCapitaArea": 0.014371129034460983
+  },
+  {
+    "country": "Tanzania",
+    "population": 63298550,
+    "area": 945087.0,
+    "perCapitaArea": 0.01493062637295799
+  },
+  {
+    "country": "Thailand",
+    "population": 70078203,
+    "area": 513120.0,
+    "perCapitaArea": 0.0073221055625527385
+  },
+  {
+    "country": "Timor-Leste",
+    "population": 1369429,
+    "area": 14874.0,
+    "perCapitaArea": 0.010861461236763644
+  },
+  {
+    "country": "Togo",
+    "population": 8680837,
+    "area": 56785.0,
+    "perCapitaArea": 0.006541419911467062
+  },
+  {
+    "country": "Tokelau",
+    "population": 1378,
+    "area": 12.0,
+    "perCapitaArea": 0.008708272859216255
+  },
+  {
+    "country": "Tonga",
+    "population": 107749,
+    "area": 747.0,
+    "perCapitaArea": 0.006932778958505415
+  },
+  {
+    "country": "Trinidad and Tobago",
+    "population": 1406585,
+    "area": 5130.0,
+    "perCapitaArea": 0.003647131172307397
+  },
+  {
+    "country": "Tunisia",
+    "population": 12046656,
+    "area": 163610.0,
+    "perCapitaArea": 0.013581362329927908
+  },
+  {
+    "country": "Turkey",
+    "population": 85561976,
+    "area": 783562.0,
+    "perCapitaArea": 0.00915782964152207
+  },
+  {
+    "country": "Turks and Caicos Islands",
+    "population": 39741,
+    "area": 948.0,
+    "perCapitaArea": 0.02385445761304446
+  },
+  {
+    "country": "Tuvalu",
+    "population": 12066,
+    "area": 26.0,
+    "perCapitaArea": 0.0021548151831592907
+  },
+  {
+    "country": "Uganda",
+    "population": 48432863,
+    "area": 241550.0,
+    "perCapitaArea": 0.004987316153496852
+  },
+  {
+    "country": "Ukraine",
+    "population": 43192122,
+    "area": 603500.0,
+    "perCapitaArea": 0.013972455439906379
+  },
+  {
+    "country": "Uruguay",
+    "population": 3496016,
+    "area": 181034.0,
+    "perCapitaArea": 0.0517829437851543
+  },
+  {
+    "country": "Uzbekistan",
+    "population": 34382084,
+    "area": 447400.0,
+    "perCapitaArea": 0.013012591092500385
+  },
+  {
+    "country": "Vanuatu",
+    "population": 321832,
+    "area": 12189.0,
+    "perCapitaArea": 0.03787379750925949
+  },
+  {
+    "country": "Venezuela",
+    "population": 29266991,
+    "area": 916445.0,
+    "perCapitaArea": 0.031313263464631536
+  },
+  {
+    "country": "Vietnam",
+    "population": 98953541,
+    "area": 331212.0,
+    "perCapitaArea": 0.003347146515959444
+  },
+  {
+    "country": "Wallis and Futuna",
+    "population": 10982,
+    "area": 142.0,
+    "perCapitaArea": 0.012930249499180478
+  },
+  {
+    "country": "Western Sahara",
+    "population": 626161,
+    "area": 266000.0,
+    "perCapitaArea": 0.4248108713254259
+  },
+  {
+    "country": "Yemen",
+    "population": 31154867,
+    "area": 527968.0,
+    "perCapitaArea": 0.016946565684263715
+  },
+  {
+    "country": "Zambia",
+    "population": 19470234,
+    "area": 752612.0,
+    "perCapitaArea": 0.03865449177446968
+  },
+  {
+    "country": "Zimbabwe",
+    "population": 15331428,
+    "area": 390757.0,
+    "perCapitaArea": 0.02548731925036598
+  }
+]

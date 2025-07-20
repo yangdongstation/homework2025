@@ -1,0 +1,1238 @@
+[
+  {
+    "country": "Afghanistan",
+    "population_wan": 4075.44,
+    "area": 652230.0,
+    "density_wan_per_km2": 0.006248
+  },
+  {
+    "country": "Albania",
+    "population_wan": 286.64,
+    "area": 28748.0,
+    "density_wan_per_km2": 0.009971
+  },
+  {
+    "country": "Algeria",
+    "population_wan": 4535.01,
+    "area": 2381741.0,
+    "density_wan_per_km2": 0.001904
+  },
+  {
+    "country": "Andorra",
+    "population_wan": 7.75,
+    "area": 468.0,
+    "density_wan_per_km2": 0.016552
+  },
+  {
+    "country": "Angola",
+    "population_wan": 3502.73,
+    "area": 1246700.0,
+    "density_wan_per_km2": 0.00281
+  },
+  {
+    "country": "Anguilla",
+    "population_wan": 1.52,
+    "area": 91.0,
+    "density_wan_per_km2": 0.016736
+  },
+  {
+    "country": "Antigua and Barbuda",
+    "population_wan": 9.95,
+    "area": 442.0,
+    "density_wan_per_km2": 0.022513
+  },
+  {
+    "country": "Argentina",
+    "population_wan": 4601.02,
+    "area": 2780400.0,
+    "density_wan_per_km2": 0.001655
+  },
+  {
+    "country": "Armenia",
+    "population_wan": 297.2,
+    "area": 29743.0,
+    "density_wan_per_km2": 0.009992
+  },
+  {
+    "country": "Aruba",
+    "population_wan": 10.76,
+    "area": 180.0,
+    "density_wan_per_km2": 0.059783
+  },
+  {
+    "country": "Australia",
+    "population_wan": 2606.88,
+    "area": 7692024.0,
+    "density_wan_per_km2": 0.000339
+  },
+  {
+    "country": "Austria",
+    "population_wan": 906.67,
+    "area": 83871.0,
+    "density_wan_per_km2": 0.01081
+  },
+  {
+    "country": "Azerbaijan",
+    "population_wan": 1030.02,
+    "area": 86600.0,
+    "density_wan_per_km2": 0.011894
+  },
+  {
+    "country": "Bahamas",
+    "population_wan": 40.05,
+    "area": 13943.0,
+    "density_wan_per_km2": 0.002873
+  },
+  {
+    "country": "Bahrain",
+    "population_wan": 178.4,
+    "area": 765.0,
+    "density_wan_per_km2": 0.2332
+  },
+  {
+    "country": "Bangladesh",
+    "population_wan": 16788.57,
+    "area": 147570.0,
+    "density_wan_per_km2": 0.113767
+  },
+  {
+    "country": "Barbados",
+    "population_wan": 28.8,
+    "area": 430.0,
+    "density_wan_per_km2": 0.066982
+  },
+  {
+    "country": "Belarus",
+    "population_wan": 943.28,
+    "area": 207600.0,
+    "density_wan_per_km2": 0.004544
+  },
+  {
+    "country": "Belgium",
+    "population_wan": 1166.83,
+    "area": 30528.0,
+    "density_wan_per_km2": 0.038222
+  },
+  {
+    "country": "Belize",
+    "population_wan": 41.22,
+    "area": 22966.0,
+    "density_wan_per_km2": 0.001795
+  },
+  {
+    "country": "Benin",
+    "population_wan": 1278.47,
+    "area": 112622.0,
+    "density_wan_per_km2": 0.011352
+  },
+  {
+    "country": "Bermuda",
+    "population_wan": 6.19,
+    "area": 54.0,
+    "density_wan_per_km2": 0.114702
+  },
+  {
+    "country": "Bhutan",
+    "population_wan": 78.79,
+    "area": 38394.0,
+    "density_wan_per_km2": 0.002052
+  },
+  {
+    "country": "Bolivia",
+    "population_wan": 1199.27,
+    "area": 1098581.0,
+    "density_wan_per_km2": 0.001092
+  },
+  {
+    "country": "Botswana",
+    "population_wan": 244.12,
+    "area": 582000.0,
+    "density_wan_per_km2": 0.000419
+  },
+  {
+    "country": "Brazil",
+    "population_wan": 21535.36,
+    "area": 8515767.0,
+    "density_wan_per_km2": 0.002529
+  },
+  {
+    "country": "British Virgin Islands",
+    "population_wan": 3.06,
+    "area": 151.0,
+    "density_wan_per_km2": 0.020262
+  },
+  {
+    "country": "Brunei",
+    "population_wan": 44.54,
+    "area": 5765.0,
+    "density_wan_per_km2": 0.007726
+  },
+  {
+    "country": "Bulgaria",
+    "population_wan": 684.46,
+    "area": 110879.0,
+    "density_wan_per_km2": 0.006173
+  },
+  {
+    "country": "Burkina Faso",
+    "population_wan": 2210.28,
+    "area": 272967.0,
+    "density_wan_per_km2": 0.008097
+  },
+  {
+    "country": "Burundi",
+    "population_wan": 1262.48,
+    "area": 27834.0,
+    "density_wan_per_km2": 0.045358
+  },
+  {
+    "country": "Cambodia",
+    "population_wan": 1716.86,
+    "area": 181035.0,
+    "density_wan_per_km2": 0.009484
+  },
+  {
+    "country": "Cameroon",
+    "population_wan": 2791.15,
+    "area": 475442.0,
+    "density_wan_per_km2": 0.005871
+  },
+  {
+    "country": "Canada",
+    "population_wan": 3838.84,
+    "area": 9984670.0,
+    "density_wan_per_km2": 0.000384
+  },
+  {
+    "country": "Caribbean Netherlands",
+    "population_wan": 2.66,
+    "area": 328.0,
+    "density_wan_per_km2": 0.008124
+  },
+  {
+    "country": "Cayman Islands",
+    "population_wan": 6.73,
+    "area": 264.0,
+    "density_wan_per_km2": 0.025484
+  },
+  {
+    "country": "Central African Republic",
+    "population_wan": 501.67,
+    "area": 622984.0,
+    "density_wan_per_km2": 0.000805
+  },
+  {
+    "country": "Chad",
+    "population_wan": 1741.36,
+    "area": 1284000.0,
+    "density_wan_per_km2": 0.001356
+  },
+  {
+    "country": "Chile",
+    "population_wan": 1925.02,
+    "area": 756102.0,
+    "density_wan_per_km2": 0.002546
+  },
+  {
+    "country": "China",
+    "population_wan": 144847.14,
+    "area": 9706961.0,
+    "density_wan_per_km2": 0.014922
+  },
+  {
+    "country": "Colombia",
+    "population_wan": 5151.28,
+    "area": 1141748.0,
+    "density_wan_per_km2": 0.004512
+  },
+  {
+    "country": "Comoros",
+    "population_wan": 90.74,
+    "area": 1862.0,
+    "density_wan_per_km2": 0.048734
+  },
+  {
+    "country": "Cook Islands",
+    "population_wan": 1.76,
+    "area": 236.0,
+    "density_wan_per_km2": 0.007445
+  },
+  {
+    "country": "Costa Rica",
+    "population_wan": 518.24,
+    "area": 51100.0,
+    "density_wan_per_km2": 0.010142
+  },
+  {
+    "country": "Croatia",
+    "population_wan": 405.93,
+    "area": 56594.0,
+    "density_wan_per_km2": 0.007173
+  },
+  {
+    "country": "Cuba",
+    "population_wan": 1130.57,
+    "area": 109884.0,
+    "density_wan_per_km2": 0.010289
+  },
+  {
+    "country": "Curaçao",
+    "population_wan": 16.55,
+    "area": 444.0,
+    "density_wan_per_km2": 0.037281
+  },
+  {
+    "country": "Cyprus",
+    "population_wan": 122.34,
+    "area": 9251.0,
+    "density_wan_per_km2": 0.013224
+  },
+  {
+    "country": "Czechia",
+    "population_wan": 1073.68,
+    "area": 78865.0,
+    "density_wan_per_km2": 0.013614
+  },
+  {
+    "country": "Denmark",
+    "population_wan": 583.5,
+    "area": 43094.0,
+    "density_wan_per_km2": 0.01354
+  },
+  {
+    "country": "Djibouti",
+    "population_wan": 101.61,
+    "area": 23200.0,
+    "density_wan_per_km2": 0.00438
+  },
+  {
+    "country": "Dominica",
+    "population_wan": 7.23,
+    "area": 751.0,
+    "density_wan_per_km2": 0.009633
+  },
+  {
+    "country": "Dominican Republic",
+    "population_wan": 1105.64,
+    "area": 48671.0,
+    "density_wan_per_km2": 0.022717
+  },
+  {
+    "country": "Ecuador",
+    "population_wan": 1811.34,
+    "area": 276841.0,
+    "density_wan_per_km2": 0.006543
+  },
+  {
+    "country": "Egypt",
+    "population_wan": 10615.67,
+    "area": 1002450.0,
+    "density_wan_per_km2": 0.01059
+  },
+  {
+    "country": "El Salvador",
+    "population_wan": 655.04,
+    "area": 21041.0,
+    "density_wan_per_km2": 0.031132
+  },
+  {
+    "country": "Equatorial Guinea",
+    "population_wan": 149.67,
+    "area": 28051.0,
+    "density_wan_per_km2": 0.005336
+  },
+  {
+    "country": "Eritrea",
+    "population_wan": 366.22,
+    "area": 117600.0,
+    "density_wan_per_km2": 0.003114
+  },
+  {
+    "country": "Estonia",
+    "population_wan": 132.19,
+    "area": 45227.0,
+    "density_wan_per_km2": 0.002923
+  },
+  {
+    "country": "Ethiopia",
+    "population_wan": 12081.27,
+    "area": 1104300.0,
+    "density_wan_per_km2": 0.01094
+  },
+  {
+    "country": "Faroe Islands",
+    "population_wan": 4.92,
+    "area": 1393.0,
+    "density_wan_per_km2": 0.003534
+  },
+  {
+    "country": "Fiji",
+    "population_wan": 90.95,
+    "area": 18272.0,
+    "density_wan_per_km2": 0.004977
+  },
+  {
+    "country": "Finland",
+    "population_wan": 555.5,
+    "area": 338424.0,
+    "density_wan_per_km2": 0.001641
+  },
+  {
+    "country": "France",
+    "population_wan": 6558.45,
+    "area": 551695.0,
+    "density_wan_per_km2": 0.011888
+  },
+  {
+    "country": "French Guiana",
+    "population_wan": 31.42,
+    "area": 83534.0,
+    "density_wan_per_km2": 0.000376
+  },
+  {
+    "country": "French Polynesia",
+    "population_wan": 28.42,
+    "area": 4167.0,
+    "density_wan_per_km2": 0.006819
+  },
+  {
+    "country": "Gabon",
+    "population_wan": 233.15,
+    "area": 267668.0,
+    "density_wan_per_km2": 0.000871
+  },
+  {
+    "country": "Gambia",
+    "population_wan": 255.85,
+    "area": 10689.0,
+    "density_wan_per_km2": 0.023936
+  },
+  {
+    "country": "Georgia",
+    "population_wan": 396.87,
+    "area": 69700.0,
+    "density_wan_per_km2": 0.005694
+  },
+  {
+    "country": "Germany",
+    "population_wan": 8388.36,
+    "area": 357114.0,
+    "density_wan_per_km2": 0.023489
+  },
+  {
+    "country": "Ghana",
+    "population_wan": 3239.55,
+    "area": 238533.0,
+    "density_wan_per_km2": 0.013581
+  },
+  {
+    "country": "Gibraltar",
+    "population_wan": 3.37,
+    "area": 6.0,
+    "density_wan_per_km2": 0.561733
+  },
+  {
+    "country": "Greece",
+    "population_wan": 1031.66,
+    "area": 131990.0,
+    "density_wan_per_km2": 0.007816
+  },
+  {
+    "country": "Greenland",
+    "population_wan": 5.7,
+    "area": 2166086.0,
+    "density_wan_per_km2": 3e-06
+  },
+  {
+    "country": "Grenada",
+    "population_wan": 11.35,
+    "area": 344.0,
+    "density_wan_per_km2": 0.032987
+  },
+  {
+    "country": "Guadeloupe",
+    "population_wan": 39.98,
+    "area": 1628.0,
+    "density_wan_per_km2": 0.024557
+  },
+  {
+    "country": "Guatemala",
+    "population_wan": 1858.4,
+    "area": 108889.0,
+    "density_wan_per_km2": 0.017067
+  },
+  {
+    "country": "Guinea",
+    "population_wan": 1386.57,
+    "area": 245857.0,
+    "density_wan_per_km2": 0.00564
+  },
+  {
+    "country": "Guinea-Bissau",
+    "population_wan": 206.34,
+    "area": 36125.0,
+    "density_wan_per_km2": 0.005712
+  },
+  {
+    "country": "Guyana",
+    "population_wan": 79.4,
+    "area": 214969.0,
+    "density_wan_per_km2": 0.000369
+  },
+  {
+    "country": "Haiti",
+    "population_wan": 1168.03,
+    "area": 27750.0,
+    "density_wan_per_km2": 0.042091
+  },
+  {
+    "country": "Honduras",
+    "population_wan": 1022.12,
+    "area": 112492.0,
+    "density_wan_per_km2": 0.009086
+  },
+  {
+    "country": "Hong Kong",
+    "population_wan": 760.43,
+    "area": 1104.0,
+    "density_wan_per_km2": 0.688795
+  },
+  {
+    "country": "Hungary",
+    "population_wan": 960.63,
+    "area": 93028.0,
+    "density_wan_per_km2": 0.010326
+  },
+  {
+    "country": "Iceland",
+    "population_wan": 34.54,
+    "area": 103000.0,
+    "density_wan_per_km2": 0.000335
+  },
+  {
+    "country": "India",
+    "population_wan": 140663.18,
+    "area": 3287590.0,
+    "density_wan_per_km2": 0.042786
+  },
+  {
+    "country": "Indonesia",
+    "population_wan": 27913.45,
+    "area": 1904569.0,
+    "density_wan_per_km2": 0.014656
+  },
+  {
+    "country": "Iran",
+    "population_wan": 8602.28,
+    "area": 1648195.0,
+    "density_wan_per_km2": 0.005219
+  },
+  {
+    "country": "Iraq",
+    "population_wan": 4216.5,
+    "area": 438317.0,
+    "density_wan_per_km2": 0.00962
+  },
+  {
+    "country": "Ireland",
+    "population_wan": 502.02,
+    "area": 70273.0,
+    "density_wan_per_km2": 0.007144
+  },
+  {
+    "country": "Isle of Man",
+    "population_wan": 8.57,
+    "area": 572.0,
+    "density_wan_per_km2": 0.014988
+  },
+  {
+    "country": "Israel",
+    "population_wan": 932.6,
+    "area": 20770.0,
+    "density_wan_per_km2": 0.044901
+  },
+  {
+    "country": "Italy",
+    "population_wan": 6026.28,
+    "area": 301336.0,
+    "density_wan_per_km2": 0.019999
+  },
+  {
+    "country": "Jamaica",
+    "population_wan": 298.51,
+    "area": 10991.0,
+    "density_wan_per_km2": 0.027159
+  },
+  {
+    "country": "Japan",
+    "population_wan": 12558.48,
+    "area": 377930.0,
+    "density_wan_per_km2": 0.03323
+  },
+  {
+    "country": "Jordan",
+    "population_wan": 1030.09,
+    "area": 89342.0,
+    "density_wan_per_km2": 0.01153
+  },
+  {
+    "country": "Kazakhstan",
+    "population_wan": 1920.5,
+    "area": 2724900.0,
+    "density_wan_per_km2": 0.000705
+  },
+  {
+    "country": "Kenya",
+    "population_wan": 5621.52,
+    "area": 580367.0,
+    "density_wan_per_km2": 0.009686
+  },
+  {
+    "country": "Kiribati",
+    "population_wan": 12.34,
+    "area": 811.0,
+    "density_wan_per_km2": 0.015218
+  },
+  {
+    "country": "Kuwait",
+    "population_wan": 438.03,
+    "area": 17818.0,
+    "density_wan_per_km2": 0.024584
+  },
+  {
+    "country": "Kyrgyzstan",
+    "population_wan": 672.83,
+    "area": 199951.0,
+    "density_wan_per_km2": 0.003365
+  },
+  {
+    "country": "Latvia",
+    "population_wan": 184.88,
+    "area": 64559.0,
+    "density_wan_per_km2": 0.002864
+  },
+  {
+    "country": "Lebanon",
+    "population_wan": 668.48,
+    "area": 10452.0,
+    "density_wan_per_km2": 0.063958
+  },
+  {
+    "country": "Lesotho",
+    "population_wan": 217.57,
+    "area": 30355.0,
+    "density_wan_per_km2": 0.007168
+  },
+  {
+    "country": "Liberia",
+    "population_wan": 530.51,
+    "area": 111369.0,
+    "density_wan_per_km2": 0.004764
+  },
+  {
+    "country": "Liechtenstein",
+    "population_wan": 3.84,
+    "area": 160.0,
+    "density_wan_per_km2": 0.023992
+  },
+  {
+    "country": "Lithuania",
+    "population_wan": 266.17,
+    "area": 65300.0,
+    "density_wan_per_km2": 0.004076
+  },
+  {
+    "country": "Luxembourg",
+    "population_wan": 64.24,
+    "area": 2586.0,
+    "density_wan_per_km2": 0.02484
+  },
+  {
+    "country": "Madagascar",
+    "population_wan": 2917.81,
+    "area": 587041.0,
+    "density_wan_per_km2": 0.00497
+  },
+  {
+    "country": "Malawi",
+    "population_wan": 2018.08,
+    "area": 118484.0,
+    "density_wan_per_km2": 0.017033
+  },
+  {
+    "country": "Malaysia",
+    "population_wan": 3318.11,
+    "area": 330803.0,
+    "density_wan_per_km2": 0.01003
+  },
+  {
+    "country": "Maldives",
+    "population_wan": 54.1,
+    "area": 300.0,
+    "density_wan_per_km2": 0.180328
+  },
+  {
+    "country": "Mali",
+    "population_wan": 2147.38,
+    "area": 1240192.0,
+    "density_wan_per_km2": 0.001731
+  },
+  {
+    "country": "Malta",
+    "population_wan": 44.4,
+    "area": 316.0,
+    "density_wan_per_km2": 0.140517
+  },
+  {
+    "country": "Marshall Islands",
+    "population_wan": 6.01,
+    "area": 181.0,
+    "density_wan_per_km2": 0.033181
+  },
+  {
+    "country": "Martinique",
+    "population_wan": 37.41,
+    "area": 1128.0,
+    "density_wan_per_km2": 0.033164
+  },
+  {
+    "country": "Mauritania",
+    "population_wan": 490.2,
+    "area": 1030700.0,
+    "density_wan_per_km2": 0.000476
+  },
+  {
+    "country": "Mauritius",
+    "population_wan": 127.47,
+    "area": 2040.0,
+    "density_wan_per_km2": 0.062487
+  },
+  {
+    "country": "Mayotte",
+    "population_wan": 28.63,
+    "area": 374.0,
+    "density_wan_per_km2": 0.07654
+  },
+  {
+    "country": "Mexico",
+    "population_wan": 13156.28,
+    "area": 1964375.0,
+    "density_wan_per_km2": 0.006697
+  },
+  {
+    "country": "Micronesia",
+    "population_wan": 11.75,
+    "area": 702.0,
+    "density_wan_per_km2": 0.016736
+  },
+  {
+    "country": "Moldova",
+    "population_wan": 401.32,
+    "area": 33846.0,
+    "density_wan_per_km2": 0.011857
+  },
+  {
+    "country": "Monaco",
+    "population_wan": 3.98,
+    "area": 2.02,
+    "density_wan_per_km2": 1.969455
+  },
+  {
+    "country": "Mongolia",
+    "population_wan": 337.81,
+    "area": 1564110.0,
+    "density_wan_per_km2": 0.000216
+  },
+  {
+    "country": "Montenegro",
+    "population_wan": 62.8,
+    "area": 13812.0,
+    "density_wan_per_km2": 0.004546
+  },
+  {
+    "country": "Montserrat",
+    "population_wan": 0.5,
+    "area": 102.0,
+    "density_wan_per_km2": 0.004868
+  },
+  {
+    "country": "Morocco",
+    "population_wan": 3777.28,
+    "area": 446550.0,
+    "density_wan_per_km2": 0.008459
+  },
+  {
+    "country": "Mozambique",
+    "population_wan": 3308.95,
+    "area": 801590.0,
+    "density_wan_per_km2": 0.004128
+  },
+  {
+    "country": "Myanmar",
+    "population_wan": 5522.71,
+    "area": 676578.0,
+    "density_wan_per_km2": 0.008163
+  },
+  {
+    "country": "Namibia",
+    "population_wan": 263.39,
+    "area": 825615.0,
+    "density_wan_per_km2": 0.000319
+  },
+  {
+    "country": "Nauru",
+    "population_wan": 1.09,
+    "area": 21.0,
+    "density_wan_per_km2": 0.051919
+  },
+  {
+    "country": "Nepal",
+    "population_wan": 3022.56,
+    "area": 147181.0,
+    "density_wan_per_km2": 0.020536
+  },
+  {
+    "country": "Netherlands",
+    "population_wan": 1721.14,
+    "area": 41850.0,
+    "density_wan_per_km2": 0.041127
+  },
+  {
+    "country": "New Caledonia",
+    "population_wan": 29.09,
+    "area": 18575.0,
+    "density_wan_per_km2": 0.001566
+  },
+  {
+    "country": "New Zealand",
+    "population_wan": 489.82,
+    "area": 270467.0,
+    "density_wan_per_km2": 0.001811
+  },
+  {
+    "country": "Nicaragua",
+    "population_wan": 677.91,
+    "area": 130373.0,
+    "density_wan_per_km2": 0.0052
+  },
+  {
+    "country": "Niger",
+    "population_wan": 2608.37,
+    "area": 1267000.0,
+    "density_wan_per_km2": 0.002059
+  },
+  {
+    "country": "Nigeria",
+    "population_wan": 21674.69,
+    "area": 923768.0,
+    "density_wan_per_km2": 0.023463
+  },
+  {
+    "country": "Niue",
+    "population_wan": 0.16,
+    "area": 260.0,
+    "density_wan_per_km2": 0.000624
+  },
+  {
+    "country": "Norway",
+    "population_wan": 551.14,
+    "area": 323802.0,
+    "density_wan_per_km2": 0.001702
+  },
+  {
+    "country": "Oman",
+    "population_wan": 532.4,
+    "area": 309500.0,
+    "density_wan_per_km2": 0.00172
+  },
+  {
+    "country": "Pakistan",
+    "population_wan": 22948.9,
+    "area": 881912.0,
+    "density_wan_per_km2": 0.026022
+  },
+  {
+    "country": "Palau",
+    "population_wan": 1.82,
+    "area": 459.0,
+    "density_wan_per_km2": 0.003972
+  },
+  {
+    "country": "Palestine",
+    "population_wan": 534.55,
+    "area": 6220.0,
+    "density_wan_per_km2": 0.085941
+  },
+  {
+    "country": "Panama",
+    "population_wan": 444.7,
+    "area": 75417.0,
+    "density_wan_per_km2": 0.005897
+  },
+  {
+    "country": "Papua New Guinea",
+    "population_wan": 929.22,
+    "area": 462840.0,
+    "density_wan_per_km2": 0.002008
+  },
+  {
+    "country": "Paraguay",
+    "population_wan": 730.58,
+    "area": 406752.0,
+    "density_wan_per_km2": 0.001796
+  },
+  {
+    "country": "Peru",
+    "population_wan": 3368.42,
+    "area": 1285216.0,
+    "density_wan_per_km2": 0.002621
+  },
+  {
+    "country": "Philippines",
+    "population_wan": 11250.9,
+    "area": 342353.0,
+    "density_wan_per_km2": 0.032863
+  },
+  {
+    "country": "Poland",
+    "population_wan": 3773.98,
+    "area": 312679.0,
+    "density_wan_per_km2": 0.01207
+  },
+  {
+    "country": "Portugal",
+    "population_wan": 1014.06,
+    "area": 92090.0,
+    "density_wan_per_km2": 0.011012
+  },
+  {
+    "country": "Qatar",
+    "population_wan": 297.99,
+    "area": 11586.0,
+    "density_wan_per_km2": 0.02572
+  },
+  {
+    "country": "Romania",
+    "population_wan": 1903.13,
+    "area": 238391.0,
+    "density_wan_per_km2": 0.007983
+  },
+  {
+    "country": "Russia",
+    "population_wan": 14580.59,
+    "area": 17098242.0,
+    "density_wan_per_km2": 0.000853
+  },
+  {
+    "country": "Rwanda",
+    "population_wan": 1360.05,
+    "area": 26338.0,
+    "density_wan_per_km2": 0.051638
+  },
+  {
+    "country": "Réunion",
+    "population_wan": 90.81,
+    "area": 2511.0,
+    "density_wan_per_km2": 0.036163
+  },
+  {
+    "country": "Saint Kitts and Nevis",
+    "population_wan": 5.39,
+    "area": 261.0,
+    "density_wan_per_km2": 0.02064
+  },
+  {
+    "country": "Saint Lucia",
+    "population_wan": 18.51,
+    "area": 616.0,
+    "density_wan_per_km2": 0.030051
+  },
+  {
+    "country": "Saint Martin",
+    "population_wan": 3.97,
+    "area": 53.0,
+    "density_wan_per_km2": 0.074962
+  },
+  {
+    "country": "Saint Vincent and the Grenadines",
+    "population_wan": 11.16,
+    "area": 389.0,
+    "density_wan_per_km2": 0.028676
+  },
+  {
+    "country": "Samoa",
+    "population_wan": 20.22,
+    "area": 2842.0,
+    "density_wan_per_km2": 0.007116
+  },
+  {
+    "country": "San Marino",
+    "population_wan": 3.41,
+    "area": 61.0,
+    "density_wan_per_km2": 0.055877
+  },
+  {
+    "country": "Saudi Arabia",
+    "population_wan": 3584.49,
+    "area": 2149690.0,
+    "density_wan_per_km2": 0.001667
+  },
+  {
+    "country": "Senegal",
+    "population_wan": 1765.37,
+    "area": 196722.0,
+    "density_wan_per_km2": 0.008974
+  },
+  {
+    "country": "Serbia",
+    "population_wan": 865.3,
+    "area": 88361.0,
+    "density_wan_per_km2": 0.009793
+  },
+  {
+    "country": "Seychelles",
+    "population_wan": 9.94,
+    "area": 452.0,
+    "density_wan_per_km2": 0.021997
+  },
+  {
+    "country": "Sierra Leone",
+    "population_wan": 830.64,
+    "area": 71740.0,
+    "density_wan_per_km2": 0.011579
+  },
+  {
+    "country": "Singapore",
+    "population_wan": 594.35,
+    "area": 710.0,
+    "density_wan_per_km2": 0.837119
+  },
+  {
+    "country": "Sint Maarten",
+    "population_wan": 4.4,
+    "area": 34.0,
+    "density_wan_per_km2": 0.129312
+  },
+  {
+    "country": "Slovakia",
+    "population_wan": 546.02,
+    "area": 49037.0,
+    "density_wan_per_km2": 0.011135
+  },
+  {
+    "country": "Slovenia",
+    "population_wan": 207.8,
+    "area": 20273.0,
+    "density_wan_per_km2": 0.01025
+  },
+  {
+    "country": "Solomon Islands",
+    "population_wan": 72.12,
+    "area": 28896.0,
+    "density_wan_per_km2": 0.002496
+  },
+  {
+    "country": "Somalia",
+    "population_wan": 1684.18,
+    "area": 637657.0,
+    "density_wan_per_km2": 0.002641
+  },
+  {
+    "country": "South Africa",
+    "population_wan": 6075.61,
+    "area": 1221037.0,
+    "density_wan_per_km2": 0.004976
+  },
+  {
+    "country": "South Sudan",
+    "population_wan": 1161.85,
+    "area": 619745.0,
+    "density_wan_per_km2": 0.001875
+  },
+  {
+    "country": "Spain",
+    "population_wan": 4671.91,
+    "area": 505992.0,
+    "density_wan_per_km2": 0.009233
+  },
+  {
+    "country": "Sri Lanka",
+    "population_wan": 2157.58,
+    "area": 65610.0,
+    "density_wan_per_km2": 0.032885
+  },
+  {
+    "country": "Sudan",
+    "population_wan": 4599.2,
+    "area": 1886068.0,
+    "density_wan_per_km2": 0.002439
+  },
+  {
+    "country": "Suriname",
+    "population_wan": 59.68,
+    "area": 163820.0,
+    "density_wan_per_km2": 0.000364
+  },
+  {
+    "country": "Sweden",
+    "population_wan": 1021.9,
+    "area": 450295.0,
+    "density_wan_per_km2": 0.002269
+  },
+  {
+    "country": "Switzerland",
+    "population_wan": 877.36,
+    "area": 41284.0,
+    "density_wan_per_km2": 0.021252
+  },
+  {
+    "country": "Taiwan",
+    "population_wan": 2388.86,
+    "area": 36193.0,
+    "density_wan_per_km2": 0.066003
+  },
+  {
+    "country": "Tajikistan",
+    "population_wan": 995.75,
+    "area": 143100.0,
+    "density_wan_per_km2": 0.006958
+  },
+  {
+    "country": "Tanzania",
+    "population_wan": 6329.85,
+    "area": 945087.0,
+    "density_wan_per_km2": 0.006698
+  },
+  {
+    "country": "Thailand",
+    "population_wan": 7007.82,
+    "area": 513120.0,
+    "density_wan_per_km2": 0.013657
+  },
+  {
+    "country": "Timor-Leste",
+    "population_wan": 136.94,
+    "area": 14874.0,
+    "density_wan_per_km2": 0.009207
+  },
+  {
+    "country": "Togo",
+    "population_wan": 868.08,
+    "area": 56785.0,
+    "density_wan_per_km2": 0.015287
+  },
+  {
+    "country": "Tokelau",
+    "population_wan": 0.14,
+    "area": 12.0,
+    "density_wan_per_km2": 0.011483
+  },
+  {
+    "country": "Tonga",
+    "population_wan": 10.77,
+    "area": 747.0,
+    "density_wan_per_km2": 0.014424
+  },
+  {
+    "country": "Trinidad and Tobago",
+    "population_wan": 140.66,
+    "area": 5130.0,
+    "density_wan_per_km2": 0.027419
+  },
+  {
+    "country": "Tunisia",
+    "population_wan": 1204.67,
+    "area": 163610.0,
+    "density_wan_per_km2": 0.007363
+  },
+  {
+    "country": "Turkey",
+    "population_wan": 8556.2,
+    "area": 783562.0,
+    "density_wan_per_km2": 0.01092
+  },
+  {
+    "country": "Turks and Caicos Islands",
+    "population_wan": 3.97,
+    "area": 948.0,
+    "density_wan_per_km2": 0.004192
+  },
+  {
+    "country": "Tuvalu",
+    "population_wan": 1.21,
+    "area": 26.0,
+    "density_wan_per_km2": 0.046408
+  },
+  {
+    "country": "Uganda",
+    "population_wan": 4843.29,
+    "area": 241550.0,
+    "density_wan_per_km2": 0.020051
+  },
+  {
+    "country": "Ukraine",
+    "population_wan": 4319.21,
+    "area": 603500.0,
+    "density_wan_per_km2": 0.007157
+  },
+  {
+    "country": "Uruguay",
+    "population_wan": 349.6,
+    "area": 181034.0,
+    "density_wan_per_km2": 0.001931
+  },
+  {
+    "country": "Uzbekistan",
+    "population_wan": 3438.21,
+    "area": 447400.0,
+    "density_wan_per_km2": 0.007685
+  },
+  {
+    "country": "Vanuatu",
+    "population_wan": 32.18,
+    "area": 12189.0,
+    "density_wan_per_km2": 0.00264
+  },
+  {
+    "country": "Venezuela",
+    "population_wan": 2926.7,
+    "area": 916445.0,
+    "density_wan_per_km2": 0.003194
+  },
+  {
+    "country": "Vietnam",
+    "population_wan": 9895.35,
+    "area": 331212.0,
+    "density_wan_per_km2": 0.029876
+  },
+  {
+    "country": "Wallis and Futuna",
+    "population_wan": 1.1,
+    "area": 142.0,
+    "density_wan_per_km2": 0.007734
+  },
+  {
+    "country": "Western Sahara",
+    "population_wan": 62.62,
+    "area": 266000.0,
+    "density_wan_per_km2": 0.000235
+  },
+  {
+    "country": "Yemen",
+    "population_wan": 3115.49,
+    "area": 527968.0,
+    "density_wan_per_km2": 0.005901
+  },
+  {
+    "country": "Zambia",
+    "population_wan": 1947.02,
+    "area": 752612.0,
+    "density_wan_per_km2": 0.002587
+  },
+  {
+    "country": "Zimbabwe",
+    "population_wan": 1533.14,
+    "area": 390757.0,
+    "density_wan_per_km2": 0.003924
+  }
+]
